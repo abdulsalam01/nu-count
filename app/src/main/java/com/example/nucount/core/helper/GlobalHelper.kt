@@ -3,6 +3,7 @@ package com.example.nucount.core.helper
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.example.nucount.R
@@ -12,11 +13,11 @@ object GlobalHelper {
     fun changeActivity(context: Context, activity: Activity) : Unit {
         val i = Intent(context, activity::class.java)
 
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
-        context.startActivity(i)
-        ((context) as Activity).finish()
+        context.applicationContext.startActivity(i)
+        ((context) as AppCompatActivity).finish()
     }
 
     fun loadFragment(context: Context, fragment: Fragment) : Boolean {

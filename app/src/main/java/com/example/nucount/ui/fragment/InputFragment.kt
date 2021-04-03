@@ -1,11 +1,13 @@
 package com.example.nucount.ui.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import androidx.fragment.app.Fragment
 import com.example.nucount.R
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,6 +24,8 @@ class InputFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private lateinit var btnDynamicForm: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -35,6 +39,17 @@ class InputFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_input, container, false)
+        val v = inflater.inflate(R.layout.fragment_input, container, false)
+
+        this.btnDynamicForm = v.findViewById(R.id.btn_dynamic_form)
+        return v
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        this.btnDynamicForm.setOnClickListener {
+        }
+    }
+
 }

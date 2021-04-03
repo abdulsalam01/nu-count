@@ -3,8 +3,12 @@ package com.example.nucount.ui.activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.example.nucount.R
+import com.example.nucount.core.helper.ConnectionChecker
 import com.example.nucount.core.helper.GlobalHelper
+import com.example.nucount.core.session.Session
+import com.example.nucount.model.User
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 
@@ -17,6 +21,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        checkSession()
 
         this.btnLogin = this.findViewById(R.id.btn_login)
         this.txtUsername = this.findViewById(R.id.txt_username)
@@ -27,7 +32,7 @@ class LoginActivity : AppCompatActivity() {
             val password = txtPassword.text.toString()
             val result = login(username, password)
 
-            if (result) GlobalHelper.changeActivity(this, MainActivity())
+            if (result) Session.rememberUser(this, User(username.length))
         }
     }
 
@@ -35,4 +40,7 @@ class LoginActivity : AppCompatActivity() {
         return true;
     }
 
+    private fun checkSession(): Unit {
+        if (Session.isLoggedIn(this)) GlobalHelper.changeActivity(this, MainActivity())
+    }
 }
