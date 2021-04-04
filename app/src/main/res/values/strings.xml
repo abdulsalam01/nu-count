@@ -4,4 +4,10 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="login">Login</string>
     <string name="exit_menu">Logout</string>
+
+    <!-- login -->
+    <string name="heading_login">Login</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+
 </resources>
