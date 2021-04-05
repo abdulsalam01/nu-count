@@ -5,7 +5,6 @@
     <string name="login">Login</string>
     <string name="exit_menu">Logout</string>
 
-
     <string-array name="status_nikah">
         <item>MENIKAH</item>
         <item>BELUM MENIKAH</item>
@@ -19,4 +18,10 @@
     <string-array name="kabupaten">
         <item>BANYUWANGI</item>
     </string-array>
+
+    <!-- login -->
+    <string name="heading_login">Login</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+
 </resources>
