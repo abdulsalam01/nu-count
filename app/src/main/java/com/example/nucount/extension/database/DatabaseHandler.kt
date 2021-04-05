@@ -37,6 +37,7 @@ abstract class DatabaseHandler(context: Context):
     protected val SUB_PEKERJAAN_2 = "sub_pekerjaan_2"
     protected val SUB_PEKERJAAN_3 = "sub_pekerjaan_3"
     protected val PENGHASILAN = "penghasilan"
+    protected val ID_PETUGAS = "id_petugas"
 
     protected val NAMA = "nama"
     protected val USIA = "usia"
@@ -63,7 +64,8 @@ abstract class DatabaseHandler(context: Context):
                 "$SUB_PEKERJAAN_1 TEXT," +
                 "$SUB_PEKERJAAN_2 TEXT," +
                 "$SUB_PEKERJAAN_3 TEXT," +
-                "$PENGHASILAN TEXT)")
+                "$PENGHASILAN TEXT," +
+                "$ID_PETUGAS INTEGER)")
 
         val CREATE_FAMILY_TABLE = ("CREATE TABLE $TABLE_FAMILY (" +
                 "$ID INTEGER PRIMARY KEY AUTOINCREMENT," +

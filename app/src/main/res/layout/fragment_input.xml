@@ -162,44 +162,23 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
+            <Spinner
+                android:id="@+id/spinner_pekerjaan"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txt_pekerjaan"
-                    android:background="@color/white"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="@string/app_name" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
+            <Spinner
+                android:id="@+id/spinner_subpekerjaan1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txt_subpekerjaan_1"
-                    android:background="@color/white"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="@string/app_name" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
+            <Spinner
+                android:id="@+id/spinner_subpekerjaan2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txt_subpekerjaan_2"
-                    android:background="@color/white"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="@string/app_name" />
-
-            </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"

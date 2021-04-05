@@ -34,6 +34,7 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
         contentValues.put(SUB_PEKERJAAN_2, data.subPekerjaan2)
         contentValues.put(SUB_PEKERJAAN_3, data.subPekerjaan3)
         contentValues.put(PENGHASILAN, data.penghasilan)
+        contentValues.put(ID_PETUGAS, data.idPetugas)
 
         val success = db.insert(TABLE_MEMBER, null, contentValues)
 
@@ -92,6 +93,7 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
                     cursor.getString(cursor.getColumnIndex(SUB_PEKERJAAN_2)),
                     cursor.getString(cursor.getColumnIndex(SUB_PEKERJAAN_3)),
                     cursor.getString(cursor.getColumnIndex(PENGHASILAN)),
+                    cursor.getInt(cursor.getColumnIndex(ID_PETUGAS)),
                     family
                 )
 

@@ -10,5 +10,6 @@ data class Member(val namaLengkap: String, val nik: String,
                   val pendidikan: String?, val pekerjaan: String?,
                   val subPekerjaan1: String?, val subPekerjaan2: String?,
                   val subPekerjaan3: String?, val penghasilan: String?,
+                  val idPetugas: Int,
                   val family: List<Family>?) {
 }

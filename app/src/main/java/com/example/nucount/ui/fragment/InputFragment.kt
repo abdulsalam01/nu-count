@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import com.example.nucount.R
 import com.example.nucount.core.constant.Service
@@ -72,6 +74,9 @@ class InputFragment : Fragment() {
         this.spinnerDusun = v.findViewById(R.id.spinner_dusun)
         this.spinnerRt = v.findViewById(R.id.spinner_rt)
         this.spinnerRw = v.findViewById(R.id.spinner_rw)
+        this.spinnerPekerjaan = v.findViewById(R.id.spinner_pekerjaan)
+        this.spinnerSubPekerjaan1 = v.findViewById(R.id.spinner_subpekerjaan1)
+        this.spinnerSubPekerjaan2 = v.findViewById(R.id.spinner_subpekerjaan2)
 
         return v
     }
@@ -85,6 +90,41 @@ class InputFragment : Fragment() {
 
         this.btnDynamicForm.setOnClickListener {
         }
+
+        this.spinnerPekerjaan.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val pekerjaan = parent!!.getItemAtPosition(position) as Pekerjaan
+                loadSubPekerjaan1(pekerjaan.id_pekerjaan.toInt())
+            }
+        }
+
+
+        this.spinnerSubPekerjaan1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val subPekerjaan1 = parent!!.getItemAtPosition(position) as SubPekerjaan1
+                loadSubPekerjaan2(subPekerjaan1.id_sub.toInt())
+            }
+        }
     }
 
     private fun initLoad() {
@@ -96,6 +136,7 @@ class InputFragment : Fragment() {
         loadDusun()
         loadRt()
         loadRw()
+        loadPekerjaan()
     }
 
     private fun loadStatus() {
@@ -138,7 +179,7 @@ class InputFragment : Fragment() {
         this.service.getKecamatan().enqueue(object : Callback<Kecamatan.Response> {
 
             override fun onFailure(call: Call<Kecamatan.Response>, t: Throwable) {
-                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
             }
 
             override fun onResponse(
@@ -162,7 +203,7 @@ class InputFragment : Fragment() {
     private fun loadDesa() {
         this.service.getDesa().enqueue(object : Callback<Desa.Response> {
             override fun onFailure(call: Call<Desa.Response>, t: Throwable) {
-                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
             }
 
             override fun onResponse(call: Call<Desa.Response>, response: Response<Desa.Response>) {
@@ -183,7 +224,7 @@ class InputFragment : Fragment() {
     private fun loadDusun() {
         this.service.getDusun().enqueue(object : Callback<Dusun.Response> {
             override fun onFailure(call: Call<Dusun.Response>, t: Throwable) {
-                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
             }
 
             override fun onResponse(
@@ -207,7 +248,7 @@ class InputFragment : Fragment() {
     private fun loadRt() {
         this.service.getRt().enqueue(object : Callback<Rt.Response> {
             override fun onFailure(call: Call<Rt.Response>, t: Throwable) {
-                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
             }
 
             override fun onResponse(call: Call<Rt.Response>, response: Response<Rt.Response>) {
@@ -228,7 +269,7 @@ class InputFragment : Fragment() {
         this.service.getRw().enqueue(object : Callback<Rw.Response> {
 
             override fun onFailure(call: Call<Rw.Response>, t: Throwable) {
-                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
             }
 
             override fun onResponse(call: Call<Rw.Response>, response: Response<Rw.Response>) {
@@ -243,6 +284,76 @@ class InputFragment : Fragment() {
                 spinnerRw.adapter = arrayAdapter
             }
 
+        })
+    }
+
+    private fun loadPekerjaan() {
+        this.service.getPekerjaan().enqueue(object : Callback<Pekerjaan.Response> {
+            override fun onFailure(call: Call<Pekerjaan.Response>, t: Throwable) {
+                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+            }
+
+            override fun onResponse(
+                call: Call<Pekerjaan.Response>,
+                response: Response<Pekerjaan.Response>
+            ) {
+                val data = response.body()?.data
+                val arrayAdapter = data?.let {
+                    ArrayAdapter(context!!,
+                        android.R.layout.simple_spinner_item, it
+                    )
+                }
+
+                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinnerPekerjaan.adapter = arrayAdapter
+            }
+        })
+    }
+
+    private fun loadSubPekerjaan1(id: Int) {
+        this.service.getSubPekerjaan1(id).enqueue(object : Callback<SubPekerjaan1.Response> {
+            override fun onFailure(call: Call<SubPekerjaan1.Response>, t: Throwable) {
+                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+            }
+
+            override fun onResponse(
+                call: Call<SubPekerjaan1.Response>,
+                response: Response<SubPekerjaan1.Response>
+            ) {
+                val data = response.body()?.data
+                val arrayAdapter = data?.let {
+                    ArrayAdapter(context!!,
+                        android.R.layout.simple_spinner_item, it
+                    )
+                }
+
+                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinnerSubPekerjaan1.adapter = arrayAdapter
+            }
+
+        })
+    }
+
+    private fun loadSubPekerjaan2(id: Int) {
+        this.service.getSubPekerjaan2(id).enqueue(object : Callback<SubPekerjaan2.Response> {
+            override fun onFailure(call: Call<SubPekerjaan2.Response>, t: Throwable) {
+                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+            }
+
+            override fun onResponse(
+                call: Call<SubPekerjaan2.Response>,
+                response: Response<SubPekerjaan2.Response>
+            ) {
+                val data = response.body()?.data
+                val arrayAdapter = data?.let {
+                    ArrayAdapter(context!!,
+                        android.R.layout.simple_spinner_item, it
+                    )
+                }
+
+                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinnerSubPekerjaan2.adapter = arrayAdapter
+            }
         })
     }
 }
