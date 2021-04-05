@@ -9,7 +9,7 @@ class ServiceManager {
 
     companion object {
 
-        lateinit var INSTANCE: Service
+        private var INSTANCE: Service? = null
 
         fun getInstance(): Service {
             if (INSTANCE == null) {
@@ -20,10 +20,10 @@ class ServiceManager {
                     .build()
 
                 this.INSTANCE = retrofit.create(Service::class.java)
-                return this.INSTANCE
+                return this.INSTANCE!!
             }
 
-            return this.INSTANCE
+            return this.INSTANCE!!
         }
     }
 }

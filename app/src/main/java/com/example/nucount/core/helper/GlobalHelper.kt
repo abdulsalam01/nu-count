@@ -17,7 +17,7 @@ object GlobalHelper {
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
         context.applicationContext.startActivity(i)
-        ((context) as AppCompatActivity).finish()
+        ((context) as Activity).finish()
     }
 
     fun loadFragment(context: Context, fragment: Fragment) : Boolean {
