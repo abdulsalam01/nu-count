@@ -1,5 +1,6 @@
 package com.example.nucount.ui.activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -67,6 +68,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun checkSession(): Unit {
-        if (Session.isLoggedIn(this)) GlobalHelper.changeActivity(this, MainActivity())
+        if (Session.isLoggedIn(this)) {
+            GlobalHelper.changeActivity(this, MainActivity())
+            finish()
+        }
     }
 }

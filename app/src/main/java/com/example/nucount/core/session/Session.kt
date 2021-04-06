@@ -32,7 +32,12 @@ object Session {
         editor.putString(USER_TASK, user.tb_tugas)
 
         editor.apply()
+
         GlobalHelper.changeActivity(context, MainActivity())
+    }
+
+    fun isLoggedIn(context: Context) : Boolean {
+        return getPreferences(context).getBoolean(LOGGED_IN, false)
     }
 
     fun getCurrentUser(context: Context) : User {
@@ -43,10 +48,6 @@ object Session {
             sharePreferenceManager.getString(USER_SURNAME, null)!!,
             sharePreferenceManager.getInt(USER_LEVEL, -1),
             sharePreferenceManager.getString(USER_TASK, null)!!)
-    }
-
-    fun isLoggedIn(context: Context) : Boolean {
-        return getPreferences(context).getBoolean(LOGGED_IN, false)
     }
 
     fun clearUser(context: Context) {

@@ -1,13 +1,13 @@
 package com.example.nucount.ui.fragment
 
+import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.Spinner
+import android.widget.*
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import com.example.nucount.R
@@ -15,6 +15,7 @@ import com.example.nucount.core.constant.Service
 import com.example.nucount.extension.singleton.ServiceManager
 import com.example.nucount.model.*
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -35,8 +36,10 @@ class InputFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    private lateinit var btnDynamicForm: Button
     private lateinit var service: Service
+
+    private lateinit var btnAddDynamicForm: Button
+    private lateinit var btnRemoveDynamicForm: Button
 
     private lateinit var spinnerStatus: Spinner
     private lateinit var spinnerJenisKelamin: Spinner
@@ -49,6 +52,13 @@ class InputFragment : Fragment() {
     private lateinit var spinnerPekerjaan: Spinner
     private lateinit var spinnerSubPekerjaan1: Spinner
     private lateinit var spinnerSubPekerjaan2: Spinner
+
+    private lateinit var txtUmur: TextInputEditText
+
+    private lateinit var formFamily: LinearLayout
+    private lateinit var formSub: LinearLayout
+
+    private var isOverThan59: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +75,8 @@ class InputFragment : Fragment() {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_input, container, false)
 
-        this.btnDynamicForm = v.findViewById(R.id.btn_dynamic_form)
+        this.btnAddDynamicForm = v.findViewById(R.id.btn_add_dynamic_form)
+        this.btnRemoveDynamicForm = v.findViewById(R.id.btn_remove_dynamic_form)
         this.spinnerStatus = v.findViewById(R.id.spinner_status)
         this.spinnerJenisKelamin = v.findViewById(R.id.spinner_jenis_kelamin)
         this.spinnerKabupaten = v.findViewById(R.id.spinner_kabupaten)
@@ -77,8 +88,15 @@ class InputFragment : Fragment() {
         this.spinnerPekerjaan = v.findViewById(R.id.spinner_pekerjaan)
         this.spinnerSubPekerjaan1 = v.findViewById(R.id.spinner_subpekerjaan1)
         this.spinnerSubPekerjaan2 = v.findViewById(R.id.spinner_subpekerjaan2)
+        this.txtUmur = v.findViewById(R.id.txt_umur)
+        this.formFamily = v.findViewById(R.id.sub_dynamic)
+        this.formSub = v.findViewById(R.id.sub_form)
 
         return v
+    }
+
+    fun deleteField(view: View) {
+        this.formFamily.removeView(view.parent as View)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -88,8 +106,38 @@ class InputFragment : Fragment() {
 
         initLoad()
 
-        this.btnDynamicForm.setOnClickListener {
+        this.btnAddDynamicForm.setOnClickListener {
+            if (!isOverThan59) {
+                val inflater = requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val rowFamily = inflater.inflate(R.layout.row_family, null)
+
+                this.formFamily.addView(rowFamily, this.formFamily.childCount - 1)
+            }
         }
+
+        this.btnRemoveDynamicForm.setOnClickListener {
+            if (this.formFamily.childCount - 1 > -1)
+                this.formFamily.removeView(this.formFamily.get(this.formFamily.childCount - 1))
+        }
+
+        this.txtUmur.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                isOverThan59 = !(!s.toString().isEmpty() && s.toString().toInt() < 60)
+
+                if (!isOverThan59)
+                    formSub.visibility = View.VISIBLE
+                else
+                    formSub.visibility = View.GONE
+            }
+
+        })
 
         this.spinnerPekerjaan.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
@@ -139,6 +187,10 @@ class InputFragment : Fragment() {
         loadPekerjaan()
     }
 
+    private fun onSubmit() {
+
+    }
+
     private fun loadStatus() {
         val data = resources.getStringArray(R.array.status_nikah)
         val arrayAdapter = data.let {
@@ -179,7 +231,7 @@ class InputFragment : Fragment() {
         this.service.getKecamatan().enqueue(object : Callback<Kecamatan.Response> {
 
             override fun onFailure(call: Call<Kecamatan.Response>, t: Throwable) {
-                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
             }
 
             override fun onResponse(
@@ -203,7 +255,7 @@ class InputFragment : Fragment() {
     private fun loadDesa() {
         this.service.getDesa().enqueue(object : Callback<Desa.Response> {
             override fun onFailure(call: Call<Desa.Response>, t: Throwable) {
-                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
             }
 
             override fun onResponse(call: Call<Desa.Response>, response: Response<Desa.Response>) {
@@ -224,7 +276,7 @@ class InputFragment : Fragment() {
     private fun loadDusun() {
         this.service.getDusun().enqueue(object : Callback<Dusun.Response> {
             override fun onFailure(call: Call<Dusun.Response>, t: Throwable) {
-                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
             }
 
             override fun onResponse(
@@ -248,7 +300,7 @@ class InputFragment : Fragment() {
     private fun loadRt() {
         this.service.getRt().enqueue(object : Callback<Rt.Response> {
             override fun onFailure(call: Call<Rt.Response>, t: Throwable) {
-                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
             }
 
             override fun onResponse(call: Call<Rt.Response>, response: Response<Rt.Response>) {
@@ -269,7 +321,7 @@ class InputFragment : Fragment() {
         this.service.getRw().enqueue(object : Callback<Rw.Response> {
 
             override fun onFailure(call: Call<Rw.Response>, t: Throwable) {
-                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
             }
 
             override fun onResponse(call: Call<Rw.Response>, response: Response<Rw.Response>) {
@@ -290,7 +342,7 @@ class InputFragment : Fragment() {
     private fun loadPekerjaan() {
         this.service.getPekerjaan().enqueue(object : Callback<Pekerjaan.Response> {
             override fun onFailure(call: Call<Pekerjaan.Response>, t: Throwable) {
-                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
             }
 
             override fun onResponse(
@@ -313,7 +365,7 @@ class InputFragment : Fragment() {
     private fun loadSubPekerjaan1(id: Int) {
         this.service.getSubPekerjaan1(id).enqueue(object : Callback<SubPekerjaan1.Response> {
             override fun onFailure(call: Call<SubPekerjaan1.Response>, t: Throwable) {
-                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
             }
 
             override fun onResponse(
@@ -337,7 +389,7 @@ class InputFragment : Fragment() {
     private fun loadSubPekerjaan2(id: Int) {
         this.service.getSubPekerjaan2(id).enqueue(object : Callback<SubPekerjaan2.Response> {
             override fun onFailure(call: Call<SubPekerjaan2.Response>, t: Throwable) {
-                Snackbar.make(btnDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
             }
 
             override fun onResponse(

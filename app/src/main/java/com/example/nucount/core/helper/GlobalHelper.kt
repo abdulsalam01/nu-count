@@ -13,11 +13,8 @@ object GlobalHelper {
     fun changeActivity(context: Context, activity: Activity) : Unit {
         val i = Intent(context, activity::class.java)
 
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-
-        context.applicationContext.startActivity(i)
-        ((context) as Activity).finish()
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(i)
     }
 
     fun loadFragment(context: Context, fragment: Fragment) : Boolean {
