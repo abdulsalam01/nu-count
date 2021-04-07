@@ -19,6 +19,28 @@
         <item>BANYUWANGI</item>
     </string-array>
 
+    <string-array name="pendidikan">
+        <item>SD, MI</item>
+        <item>SLTP, MTs</item>
+        <item>SLTA, MA, SMK</item>
+        <item>S-1</item>
+        <item>S-2</item>
+        <item>S-3</item>
+    </string-array>
+
+    <string-array name="penghasilan">
+        <item> > 500,000</item>
+        <item>500 s.d 1.000,000</item>
+        <item>1.000,000 sd 2.000,000</item>
+        <item>2.000,000 sd 4.000,000</item>
+        <item> > 4.000,000</item>
+    </string-array>
+
+    <string-array name="anggota">
+        <item>Anggota</item>
+        <item>Bukan</item>
+    </string-array>
+
     <!-- login -->
     <string name="heading_login">Login</string>
     <string name="hint_username">Username</string>

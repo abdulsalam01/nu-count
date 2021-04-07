@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +13,15 @@ import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import com.example.nucount.R
 import com.example.nucount.core.constant.Service
+import com.example.nucount.core.helper.ConnectionChecker
+import com.example.nucount.core.session.Session
+import com.example.nucount.extension.database.MemberOperation
 import com.example.nucount.extension.singleton.ServiceManager
 import com.example.nucount.model.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.gson.Gson
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -40,6 +46,7 @@ class InputFragment : Fragment() {
 
     private lateinit var btnAddDynamicForm: Button
     private lateinit var btnRemoveDynamicForm: Button
+    private lateinit var btnSubmit: Button
 
     private lateinit var spinnerStatus: Spinner
     private lateinit var spinnerJenisKelamin: Spinner
@@ -49,11 +56,20 @@ class InputFragment : Fragment() {
     private lateinit var spinnerDusun: Spinner
     private lateinit var spinnerRt: Spinner
     private lateinit var spinnerRw: Spinner
+    private lateinit var spinnerPendidikan: Spinner
     private lateinit var spinnerPekerjaan: Spinner
     private lateinit var spinnerSubPekerjaan1: Spinner
     private lateinit var spinnerSubPekerjaan2: Spinner
+    private lateinit var spinnerPenghasilan: Spinner
+    private lateinit var spinnerAnggota: Spinner
 
+    private lateinit var txtNamaLengkap : TextInputEditText
+    private lateinit var txtNik: TextInputEditText
+    private lateinit var txtTanggalLahir: TextInputEditText // yyyy-mm-dd
+    private lateinit var txtTempatLahir: TextInputEditText
+    private lateinit var txtNomorHp: TextInputEditText
     private lateinit var txtUmur: TextInputEditText
+    private lateinit var txtSubPekerjaan3: TextInputEditText
 
     private lateinit var formFamily: LinearLayout
     private lateinit var formSub: LinearLayout
@@ -77,6 +93,7 @@ class InputFragment : Fragment() {
 
         this.btnAddDynamicForm = v.findViewById(R.id.btn_add_dynamic_form)
         this.btnRemoveDynamicForm = v.findViewById(R.id.btn_remove_dynamic_form)
+        this.btnSubmit = v.findViewById(R.id.btn_submit)
         this.spinnerStatus = v.findViewById(R.id.spinner_status)
         this.spinnerJenisKelamin = v.findViewById(R.id.spinner_jenis_kelamin)
         this.spinnerKabupaten = v.findViewById(R.id.spinner_kabupaten)
@@ -85,10 +102,19 @@ class InputFragment : Fragment() {
         this.spinnerDusun = v.findViewById(R.id.spinner_dusun)
         this.spinnerRt = v.findViewById(R.id.spinner_rt)
         this.spinnerRw = v.findViewById(R.id.spinner_rw)
+        this.spinnerPendidikan = v.findViewById(R.id.spinner_pendidikan)
         this.spinnerPekerjaan = v.findViewById(R.id.spinner_pekerjaan)
         this.spinnerSubPekerjaan1 = v.findViewById(R.id.spinner_subpekerjaan1)
         this.spinnerSubPekerjaan2 = v.findViewById(R.id.spinner_subpekerjaan2)
+        this.spinnerPenghasilan = v.findViewById(R.id.spinner_penghasilan)
+        this.spinnerAnggota = v.findViewById(R.id.spinner_anggota)
+        this.txtNamaLengkap = v.findViewById(R.id.txt_nama_lengkap)
+        this.txtNik = v.findViewById(R.id.txt_nik)
+        this.txtNomorHp = v.findViewById(R.id.txt_nomor_hp)
+        this.txtTanggalLahir = v.findViewById(R.id.txt_tanggal_lahir)
+        this.txtTempatLahir = v.findViewById(R.id.txt_tempat_lahir)
         this.txtUmur = v.findViewById(R.id.txt_umur)
+        this.txtSubPekerjaan3 = v.findViewById(R.id.txt_subpekerjaan_3)
         this.formFamily = v.findViewById(R.id.sub_dynamic)
         this.formSub = v.findViewById(R.id.sub_form)
 
@@ -173,6 +199,13 @@ class InputFragment : Fragment() {
                 loadSubPekerjaan2(subPekerjaan1.id_sub.toInt())
             }
         }
+
+        this.btnSubmit.setOnClickListener {
+            if (ConnectionChecker.isNetworkAvailable(requireContext()))
+                onSubmit()
+            else
+                Log.d("Local", "Local")
+        }
     }
 
     private fun initLoad() {
@@ -184,11 +217,59 @@ class InputFragment : Fragment() {
         loadDusun()
         loadRt()
         loadRw()
+        loadPendidikan()
         loadPekerjaan()
+        loadPenghasilan()
+        loadAnggota()
     }
 
     private fun onSubmit() {
+        val gson: Gson = Gson()
+        val data = HashMap<String, Any>()
+        val idSession = Session.getCurrentUser(requireContext()).id_user
 
+        data["nama_lengkap"] = txtNamaLengkap.text.toString()
+        data["nik"] = txtNik.text.toString()
+        data["status_pernikahan"] = spinnerStatus.selectedItem
+        data["tanggal_lahir"] = txtTanggalLahir.text.toString() //yyyy-mm-dd
+        data["tempat_lahir"] = txtTempatLahir.text.toString()
+        data["jenis_kelamin"] = spinnerJenisKelamin.selectedItem
+        data["nomor"] = txtNomorHp.text.toString()
+        data["kecamatan"] = (spinnerKecamatan.selectedItem as Kecamatan).id_kecamatan
+        data["desa"] = (spinnerDesa.selectedItem as Desa).id_desa
+        data["dusun"] = (spinnerDusun.selectedItem as Dusun).id_dusun
+        data["rt"] = (spinnerRt.selectedItem as Rt).id_rt
+        data["rw"] = (spinnerRw.selectedItem as Rw).id_rw
+
+        if(!isOverThan59) {
+            // some of rest code
+            data["pendidikan"] = spinnerPendidikan.selectedItemPosition + 1
+            data["pekerjaan"] = (spinnerPekerjaan.selectedItem as Pekerjaan).id_pekerjaan
+            data["sub_pekerjaan"] = (spinnerSubPekerjaan1.selectedItem as SubPekerjaan1).id_sub
+            data["sub_pekerjaan_2"] = (spinnerSubPekerjaan2.selectedItem as SubPekerjaan2).id_sub2
+            data["sub_pekerjaan_3"] = txtSubPekerjaan3.text.toString()
+            data["penghasilan"] = spinnerPenghasilan.selectedItemPosition + 1
+            data["anggota"] = spinnerAnggota.selectedItemPosition + 1
+
+            val arrFamily = HashMap<Any, Any>()
+            for (i in 0..this.formFamily.childCount) {
+                val txtNama = this.formFamily[i].findViewById<EditText>(R.id.txt_nama)
+                val txtUsia = this.formFamily[i].findViewById<EditText>(R.id.txt_usia)
+                val spinnerHk = this.formFamily[i].findViewById<Spinner>(R.id.spinner_hk)
+                val spinnerPendidikanOr = this.formFamily[i].findViewById<Spinner>(R.id.spinner_pendidikan_or)
+            }
+        }
+
+        this.service.inputData(idSession, data).enqueue(object : Callback<ResponseBody> {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Snackbar.make(btnSubmit, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+            }
+
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                Snackbar.make(btnSubmit, response.body().toString(), Snackbar.LENGTH_SHORT).show()
+            }
+
+        })
     }
 
     private fun loadStatus() {
@@ -360,6 +441,42 @@ class InputFragment : Fragment() {
                 spinnerPekerjaan.adapter = arrayAdapter
             }
         })
+    }
+
+    private fun loadPendidikan() {
+        val data = resources.getStringArray(R.array.pendidikan)
+        val arrayAdapter = data.let {
+            ArrayAdapter(requireContext(),
+                    android.R.layout.simple_spinner_item, it
+            )
+        }
+
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerPendidikan.adapter = arrayAdapter
+    }
+
+    private fun loadPenghasilan() {
+        val data = resources.getStringArray(R.array.penghasilan)
+        val arrayAdapter = data.let {
+            ArrayAdapter(requireContext(),
+                    android.R.layout.simple_spinner_item, it
+            )
+        }
+
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerPenghasilan.adapter = arrayAdapter
+    }
+
+    private fun loadAnggota() {
+        val data = resources.getStringArray(R.array.anggota)
+        val arrayAdapter = data.let {
+            ArrayAdapter(requireContext(),
+                    android.R.layout.simple_spinner_item, it
+            )
+        }
+
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerAnggota.adapter = arrayAdapter
     }
 
     private fun loadSubPekerjaan1(id: Int) {

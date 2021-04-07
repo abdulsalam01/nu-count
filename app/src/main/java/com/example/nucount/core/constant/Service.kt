@@ -1,6 +1,7 @@
 package com.example.nucount.core.constant
 
 import com.example.nucount.model.*
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -37,4 +38,8 @@ interface Service {
     @GET(API.GET_SUB_2 + "{id}")
     fun getSubPekerjaan2(@Path("id") id: Int): Call<SubPekerjaan2.Response>
 
+    @JvmSuppressWildcards
+    @FormUrlEncoded
+    @POST(API.INPUT_DATA + "{id}")
+    fun inputData(@Path("id") id: Int, @FieldMap data: Map<String, Any>) : Call<ResponseBody>
 }
