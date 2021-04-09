@@ -257,6 +257,9 @@ class InputFragment : Fragment() {
                 val txtUsia = this.formFamily[i].findViewById<EditText>(R.id.txt_usia)
                 val spinnerHk = this.formFamily[i].findViewById<Spinner>(R.id.spinner_hk)
                 val spinnerPendidikanOr = this.formFamily[i].findViewById<Spinner>(R.id.spinner_pendidikan_or)
+
+                spinnerHk.selectedItem.toString()
+                spinnerPendidikanOr.selectedItemPosition + 1
             }
         }
 

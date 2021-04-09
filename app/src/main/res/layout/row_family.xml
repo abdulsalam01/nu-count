@@ -23,11 +23,13 @@
         android:id="@+id/spinner_hk"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:entries="@array/hk"
         android:spinnerMode="dropdown" />
 
     <Spinner
         android:id="@+id/spinner_pendidikan_or"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:entries="@array/pendidikan_or"
         android:spinnerMode="dropdown" />
 </LinearLayout>
