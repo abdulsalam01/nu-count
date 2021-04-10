@@ -51,9 +51,20 @@
         <item>Belum Sekolah</item>
         <item>SLTP, MTs</item>
     </string-array>
+
     <!-- login -->
     <string name="heading_login">Login</string>
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
+
+    <!-- Form Input -->
+    <string name="add">Add</string>
+    <string name="remove">Remove</string>
+    <string name="hint_nama">Masukan Nama Lengkap</string>
+    <string name="hint_nik">Masukan NIK</string>
+    <string name="hint_tgl_lahir">Masukan Tanggal Lahir</string>
+    <string name="hint_tempat_lahir">Masukan Tempat Lahir</string>
+    <string name="hint_no_hp">Masukan Nomor Hp</string>
+    <string name="submit">Submit</string>
 
 </resources>
