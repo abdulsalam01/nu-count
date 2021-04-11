@@ -13,6 +13,8 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
 
     override fun create(data: Member): Long {
         val db = this.writableDatabase
+
+        db.beginTransaction()
         val contentValues = ContentValues()
 
         contentValues.put(NAMA_LENGKAP, data.namaLengkap)
@@ -38,6 +40,17 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
 
         val success = db.insert(TABLE_MEMBER, null, contentValues)
 
+        if (success > 0) {
+            if (data.family!!.size > 0) {
+                for (values in data.family) {
+
+                }
+            }
+
+            db.setTransactionSuccessful()
+        }
+
+        db.endTransaction()
         db.close()
         return success
     }

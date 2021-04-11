@@ -22,6 +22,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import okhttp3.ResponseBody
+import org.json.JSONArray
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -224,7 +226,6 @@ class InputFragment : Fragment() {
     }
 
     private fun onSubmit() {
-        val gson: Gson = Gson()
         val data = HashMap<String, Any>()
         val idSession = Session.getCurrentUser(requireContext()).id_user
 
@@ -251,16 +252,23 @@ class InputFragment : Fragment() {
             data["penghasilan"] = spinnerPenghasilan.selectedItemPosition + 1
             data["anggota"] = spinnerAnggota.selectedItemPosition + 1
 
-            val arrFamily = HashMap<Any, Any>()
-            for (i in 0..this.formFamily.childCount) {
+            val jsonArrFamily = JSONArray()
+            for (i in 0..this.formFamily.childCount - 1) {
                 val txtNama = this.formFamily[i].findViewById<EditText>(R.id.txt_nama)
                 val txtUsia = this.formFamily[i].findViewById<EditText>(R.id.txt_usia)
                 val spinnerHk = this.formFamily[i].findViewById<Spinner>(R.id.spinner_hk)
                 val spinnerPendidikanOr = this.formFamily[i].findViewById<Spinner>(R.id.spinner_pendidikan_or)
 
-                spinnerHk.selectedItem.toString()
-                spinnerPendidikanOr.selectedItemPosition + 1
+                val jsonObjFamily = JSONObject()
+                jsonObjFamily.put("nama_keluarga", txtNama.text)
+                jsonObjFamily.put("usia", txtUsia.text)
+                jsonObjFamily.put("hk_keluarga", spinnerHk.selectedItem)
+                jsonObjFamily.put("pendidikan", spinnerPendidikanOr.selectedItemPosition + 1)
+
+                jsonArrFamily.put(i, jsonObjFamily)
             }
+
+            data["keluarga"] = jsonArrFamily.toString()
         }
 
         this.service.inputData(idSession, data).enqueue(object : Callback<ResponseBody> {
