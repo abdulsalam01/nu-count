@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,13 +19,15 @@ import com.example.nucount.extension.singleton.ServiceManager
 import com.example.nucount.model.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
-import com.google.gson.Gson
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -43,6 +44,8 @@ class InputFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    private lateinit var memberOperation: MemberOperation
 
     private lateinit var service: Service
 
@@ -93,6 +96,7 @@ class InputFragment : Fragment() {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_input, container, false)
 
+        this.memberOperation = MemberOperation(requireContext())
         this.btnAddDynamicForm = v.findViewById(R.id.btn_add_dynamic_form)
         this.btnRemoveDynamicForm = v.findViewById(R.id.btn_remove_dynamic_form)
         this.btnSubmit = v.findViewById(R.id.btn_submit)
@@ -170,7 +174,6 @@ class InputFragment : Fragment() {
         this.spinnerPekerjaan.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
             }
 
             override fun onItemSelected(
@@ -188,7 +191,6 @@ class InputFragment : Fragment() {
         this.spinnerSubPekerjaan1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
             }
 
             override fun onItemSelected(
@@ -203,10 +205,7 @@ class InputFragment : Fragment() {
         }
 
         this.btnSubmit.setOnClickListener {
-            if (ConnectionChecker.isNetworkAvailable(requireContext()))
-                onSubmit()
-            else
-                Log.d("Local", "Local")
+            onSubmit(ConnectionChecker.isNetworkAvailable(requireContext()))
         }
     }
 
@@ -225,9 +224,10 @@ class InputFragment : Fragment() {
         loadAnggota()
     }
 
-    private fun onSubmit() {
+    private fun onSubmit(connection: Boolean) {
         val data = HashMap<String, Any>()
         val idSession = Session.getCurrentUser(requireContext()).id_user
+        val arrFamily = ArrayList<Family>()
 
         data["nama_lengkap"] = txtNamaLengkap.text.toString()
         data["nik"] = txtNik.text.toString()
@@ -241,6 +241,14 @@ class InputFragment : Fragment() {
         data["dusun"] = (spinnerDusun.selectedItem as Dusun).id_dusun
         data["rt"] = (spinnerRt.selectedItem as Rt).id_rt
         data["rw"] = (spinnerRw.selectedItem as Rw).id_rw
+        // init null-value - safety insert to local
+        data["pendidikan"] = ""
+        data["pekerjaan"] = ""
+        data["sub_pekerjaan"] = ""
+        data["sub_pekerjaan_2"] = ""
+        data["sub_pekerjaan_3"] = ""
+        data["penghasilan"] = ""
+        data["anggota"] = ""
 
         if(!isOverThan59) {
             // some of rest code
@@ -264,23 +272,58 @@ class InputFragment : Fragment() {
                 jsonObjFamily.put("usia", txtUsia.text)
                 jsonObjFamily.put("hk_keluarga", spinnerHk.selectedItem)
                 jsonObjFamily.put("pendidikan", spinnerPendidikanOr.selectedItemPosition + 1)
-
                 jsonArrFamily.put(i, jsonObjFamily)
+
+                val family = Family(jsonObjFamily.getString("nama_keluarga"),
+                    jsonObjFamily.getString("usia"),
+                    jsonObjFamily.getString("hk_keluarga"),
+                    jsonObjFamily.getString("pendidikan"),
+                    0
+                )
+                arrFamily.add(family)
             }
 
             data["keluarga"] = jsonArrFamily.toString()
         }
 
-        this.service.inputData(idSession, data).enqueue(object : Callback<ResponseBody> {
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Snackbar.make(btnSubmit, t.message.toString(), Snackbar.LENGTH_SHORT).show()
-            }
+        // over internet
+        if (connection) {
 
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                Snackbar.make(btnSubmit, response.body().toString(), Snackbar.LENGTH_SHORT).show()
-            }
+            this.service.inputData(idSession, data).enqueue(object : Callback<ResponseBody> {
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    Snackbar.make(btnSubmit, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                }
 
-        })
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    Snackbar.make(btnSubmit, response.body().toString(), Snackbar.LENGTH_SHORT)
+                        .show()
+                }
+
+            })
+            // offline mode
+        } else {
+            val member = Member(data["nama_lengkap"].toString(), data["nik"].toString(),
+                data["status_pernikahan"].toString(), null,
+                data["tempat_lahir"].toString(), data["jenis_kelamin"].toString(),
+                data["nomor"].toString(), "BANYUWANGI",
+                data["kecamatan"].toString(), data["desa"].toString(),
+                data["dusun"].toString(), data["rt"].toString(), data["rw"].toString(),
+                data["pendidikan"].toString(), data["pekerjaan"].toString(),
+                data["sub_pekerjaan"].toString(), data["sub_pekerjaan_2"].toString(),
+                data["sub_pekerjaan_3"].toString(), data["penghasilan"].toString(),
+                data["anggota"].toString(), idSession, arrFamily
+            )
+
+            val status = this.memberOperation.create(member)
+
+            if (status > 0)
+                Toast.makeText(requireContext(), "Berhasil ${status}", Toast.LENGTH_LONG).show()
+            else
+                Toast.makeText(requireContext(), "Gagal rek!", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun loadStatus() {

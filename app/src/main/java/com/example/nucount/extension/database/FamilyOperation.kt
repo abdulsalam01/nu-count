@@ -18,6 +18,7 @@ class FamilyOperation(context: Context) : SqlOperation<Family>, DatabaseHandler(
         contentValues.put(HK, data.hk)
         contentValues.put(USIA, data.usia)
         contentValues.put(PENDIDIKAN, data.pendidikan)
+        contentValues.put(ID.plus("_member"), data.idMember)
 
         val success = db.insert(TABLE_FAMILY, null, contentValues)
 
@@ -63,9 +64,10 @@ class FamilyOperation(context: Context) : SqlOperation<Family>, DatabaseHandler(
         if (cursor.moveToFirst()) {
             do {
                 val family = Family(cursor.getString(cursor.getColumnIndex(NAMA)),
-                    cursor.getInt(cursor.getColumnIndex(USIA)),
+                    cursor.getString(cursor.getColumnIndex(USIA)),
                     cursor.getString(cursor.getColumnIndex(HK)),
-                    cursor.getString(cursor.getColumnIndex(PENDIDIKAN))
+                    cursor.getString(cursor.getColumnIndex(PENDIDIKAN)),
+                    cursor.getInt(cursor.getColumnIndex(ID.plus("_member")))
                 )
 
                 data.add(family)
@@ -95,9 +97,10 @@ class FamilyOperation(context: Context) : SqlOperation<Family>, DatabaseHandler(
         if (cursor.moveToFirst()) {
             do {
                 val family = Family(cursor.getString(cursor.getColumnIndex(NAMA)),
-                    cursor.getInt(cursor.getColumnIndex(USIA)),
+                    cursor.getString(cursor.getColumnIndex(USIA)),
                     cursor.getString(cursor.getColumnIndex(HK)),
-                    cursor.getString(cursor.getColumnIndex(PENDIDIKAN))
+                    cursor.getString(cursor.getColumnIndex(PENDIDIKAN)),
+                    cursor.getInt(cursor.getColumnIndex(ID.plus("_member")))
                 )
 
                 data.add(family)

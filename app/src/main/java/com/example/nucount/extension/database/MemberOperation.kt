@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteException
 import com.example.nucount.core.helper.SqlOperation
+import com.example.nucount.model.Family
 import com.example.nucount.model.Member
 import java.util.*
 import kotlin.collections.ArrayList
@@ -13,45 +14,58 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
 
     override fun create(data: Member): Long {
         val db = this.writableDatabase
+        var success = 0L
 
         db.beginTransaction()
-        val contentValues = ContentValues()
+        try {
+            val contentValues = ContentValues()
 
-        contentValues.put(NAMA_LENGKAP, data.namaLengkap)
-        contentValues.put(NIK, data.nik)
-        contentValues.put(STATUS_NIKAH, data.statusNikah)
-        contentValues.put(TANGGAL_LAHIR, data.tanggalLahir.toString())
-        contentValues.put(TEMPAT_LAHIR, data.tempatLahir)
-        contentValues.put(JENIS_KELAMIN, data.jenisKelamin)
-        contentValues.put(NOMOR, data.nomor)
-        contentValues.put(KABUPATEN, data.kabupaten)
-        contentValues.put(KECAMATAN, data.kecamatan)
-        contentValues.put(DESA, data.desa)
-        contentValues.put(DUSUN, data.dusun)
-        contentValues.put(RT, data.rt)
-        contentValues.put(RW, data.rw)
-        contentValues.put(PENDIDIKAN, data.pendidikan)
-        contentValues.put(PEKERJAAN, data.pekerjaan)
-        contentValues.put(SUB_PEKERJAAN_1, data.subPekerjaan1)
-        contentValues.put(SUB_PEKERJAAN_2, data.subPekerjaan2)
-        contentValues.put(SUB_PEKERJAAN_3, data.subPekerjaan3)
-        contentValues.put(PENGHASILAN, data.penghasilan)
-        contentValues.put(ID_PETUGAS, data.idPetugas)
+            contentValues.put(NAMA_LENGKAP, data.namaLengkap)
+            contentValues.put(NIK, data.nik)
+            contentValues.put(STATUS_NIKAH, data.statusNikah)
+            contentValues.put(TANGGAL_LAHIR, data.tanggalLahir.toString())
+            contentValues.put(TEMPAT_LAHIR, data.tempatLahir)
+            contentValues.put(JENIS_KELAMIN, data.jenisKelamin)
+            contentValues.put(NOMOR, data.nomor)
+            contentValues.put(KABUPATEN, data.kabupaten)
+            contentValues.put(KECAMATAN, data.kecamatan)
+            contentValues.put(DESA, data.desa)
+            contentValues.put(DUSUN, data.dusun)
+            contentValues.put(RT, data.rt)
+            contentValues.put(RW, data.rw)
+            contentValues.put(PENDIDIKAN, data.pendidikan)
+            contentValues.put(PEKERJAAN, data.pekerjaan)
+            contentValues.put(SUB_PEKERJAAN_1, data.subPekerjaan1)
+            contentValues.put(SUB_PEKERJAAN_2, data.subPekerjaan2)
+            contentValues.put(SUB_PEKERJAAN_3, data.subPekerjaan3)
+            contentValues.put(ANGGOTA, data.anggota)
+            contentValues.put(PENGHASILAN, data.penghasilan)
+            contentValues.put(ID_PETUGAS, data.idPetugas)
 
-        val success = db.insert(TABLE_MEMBER, null, contentValues)
+            success = db.insert(TABLE_MEMBER, null, contentValues)
 
-        if (success > 0) {
-            if (data.family!!.size > 0) {
-                for (values in data.family) {
+            if (success > 0) {
 
+                if (data.family!!.size > 0) {
+                    val familyOperation = FamilyOperation(context)
+
+                    for (values in data.family) {
+                        val family = Family(values.nama, values.usia,
+                            values.hk, values.pendidikan, success.toInt())
+
+                        familyOperation.create(family)
+                    }
                 }
-            }
 
-            db.setTransactionSuccessful()
+                db.setTransactionSuccessful()
+            }
+        } catch (e: Exception) {
+            e.message
+        } finally {
+            db.endTransaction()
+            db.close()
         }
 
-        db.endTransaction()
-        db.close()
         return success
     }
 
@@ -106,6 +120,7 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
                     cursor.getString(cursor.getColumnIndex(SUB_PEKERJAAN_2)),
                     cursor.getString(cursor.getColumnIndex(SUB_PEKERJAAN_3)),
                     cursor.getString(cursor.getColumnIndex(PENGHASILAN)),
+                    cursor.getString(cursor.getColumnIndex(ANGGOTA)),
                     cursor.getInt(cursor.getColumnIndex(ID_PETUGAS)),
                     family
                 )

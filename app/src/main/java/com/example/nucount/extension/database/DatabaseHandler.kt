@@ -37,6 +37,7 @@ abstract class DatabaseHandler(context: Context):
     protected val SUB_PEKERJAAN_2 = "sub_pekerjaan_2"
     protected val SUB_PEKERJAAN_3 = "sub_pekerjaan_3"
     protected val PENGHASILAN = "penghasilan"
+    protected val ANGGOTA = "anggota"
     protected val ID_PETUGAS = "id_petugas"
 
     protected val NAMA = "nama"
@@ -49,7 +50,7 @@ abstract class DatabaseHandler(context: Context):
                 "$NAMA_LENGKAP TEXT," +
                 "$NIK TEXT," +
                 "$STATUS_NIKAH TEXT," +
-                "$TANGGAL_LAHIR DATE" +
+                "$TANGGAL_LAHIR DATE," +
                 "$TEMPAT_LAHIR TEXT," +
                 "$JENIS_KELAMIN TEXT," +
                 "$NOMOR TEXT," +
@@ -65,6 +66,7 @@ abstract class DatabaseHandler(context: Context):
                 "$SUB_PEKERJAAN_2 TEXT," +
                 "$SUB_PEKERJAAN_3 TEXT," +
                 "$PENGHASILAN TEXT," +
+                "$ANGGOTA TEXT," +
                 "$ID_PETUGAS INTEGER)")
 
         val CREATE_FAMILY_TABLE = ("CREATE TABLE $TABLE_FAMILY (" +
