@@ -16,23 +16,35 @@
         android:paddingRight="16dp"
         android:paddingBottom="16dp">
 
-        <Button
-            android:id="@+id/btn_add_dynamic_form"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/add" />
+            android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/btn_remove_dynamic_form"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/remove" />
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/profileWrapper"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                app:cardCornerRadius="50dp"
+                app:strokeColor="@color/baseColor"
+                app:contentPadding="5dp"
+                app:strokeWidth="3dp">
+
+                <ImageView
+                    android:id="@+id/profileImg"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:background="@drawable/ic_worker"
+                    android:scaleType="centerCrop" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </RelativeLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/TextInputLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="20dp"
             app:errorEnabled="true"
             app:hintEnabled="false">
 
@@ -40,7 +52,7 @@
                 android:id="@+id/txt_nama_lengkap"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="@string/hint_nama"
+                android:hint="@string/hint_nama_lengkap"
                 android:textSize="14sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -271,11 +283,34 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_add_dynamic_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.5"
+                android:text="@string/add" />
+
+            <Button
+                android:id="@+id/btn_remove_dynamic_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="@string/remove" />
+
+        </LinearLayout>
+
         <Button
             android:id="@+id/btn_submit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="45dp"
             android:text="@string/submit" />
 
     </LinearLayout>

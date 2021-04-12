@@ -262,8 +262,8 @@ class InputFragment : Fragment() {
 
             val jsonArrFamily = JSONArray()
             for (i in 0..this.formFamily.childCount - 1) {
-                val txtNama = this.formFamily[i].findViewById<EditText>(R.id.txt_nama)
-                val txtUsia = this.formFamily[i].findViewById<EditText>(R.id.txt_usia)
+                val txtNama = this.formFamily[i].findViewById<TextInputEditText>(R.id.txt_nama)
+                val txtUsia = this.formFamily[i].findViewById<TextInputEditText>(R.id.txt_usia)
                 val spinnerHk = this.formFamily[i].findViewById<Spinner>(R.id.spinner_hk)
                 val spinnerPendidikanOr = this.formFamily[i].findViewById<Spinner>(R.id.spinner_pendidikan_or)
 
