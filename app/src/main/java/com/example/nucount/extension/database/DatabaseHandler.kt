@@ -50,7 +50,7 @@ abstract class DatabaseHandler(context: Context):
                 "$NAMA_LENGKAP TEXT," +
                 "$NIK TEXT," +
                 "$STATUS_NIKAH TEXT," +
-                "$TANGGAL_LAHIR DATE," +
+                "$TANGGAL_LAHIR TEXT," +
                 "$TEMPAT_LAHIR TEXT," +
                 "$JENIS_KELAMIN TEXT," +
                 "$NOMOR TEXT," +

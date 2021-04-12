@@ -21,4 +21,5 @@
         app:itemIconTint="@drawable/state"
         app:itemTextColor="@drawable/state"
         app:menu="@menu/nav_menu"/>
+
 </RelativeLayout>

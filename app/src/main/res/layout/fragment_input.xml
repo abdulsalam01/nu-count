@@ -58,15 +58,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/hint_nik"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <Spinner
             android:id="@+id/spinner_status"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginTop="15dp"
+            android:background="@drawable/spinner_dropdown_state"
             android:spinnerMode="dropdown" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -99,7 +100,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/app_name"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -116,15 +117,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/hint_tempat_lahir"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <Spinner
             android:id="@+id/spinner_jenis_kelamin"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginTop="15dp"
+            android:background="@drawable/spinner_dropdown_state"
             android:spinnerMode="dropdown" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -140,50 +142,56 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/hint_no_hp"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <Spinner
             android:id="@+id/spinner_kabupaten"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginTop="15dp"
+            android:background="@drawable/spinner_dropdown_state"
             android:spinnerMode="dropdown" />
 
         <Spinner
             android:id="@+id/spinner_kecamatan"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginTop="15dp"
+            android:background="@drawable/spinner_dropdown_state"
             android:spinnerMode="dropdown" />
 
         <Spinner
             android:id="@+id/spinner_desa"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginTop="15dp"
+            android:background="@drawable/spinner_dropdown_state"
             android:spinnerMode="dropdown" />
 
         <Spinner
             android:id="@+id/spinner_dusun"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginTop="15dp"
+            android:background="@drawable/spinner_dropdown_state"
             android:spinnerMode="dropdown" />
 
         <Spinner
             android:id="@+id/spinner_rt"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginTop="15dp"
+            android:background="@drawable/spinner_dropdown_state"
             android:spinnerMode="dropdown" />
 
         <Spinner
             android:id="@+id/spinner_rw"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginTop="15dp"
+            android:background="@drawable/spinner_dropdown_state"
             android:spinnerMode="dropdown" />
 
         <LinearLayout
@@ -196,25 +204,33 @@
             <Spinner
                 android:id="@+id/spinner_pendidikan"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/spinner_dropdown_state"
                 android:spinnerMode="dropdown" />
 
             <Spinner
                 android:id="@+id/spinner_pekerjaan"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/spinner_dropdown_state"
                 android:spinnerMode="dropdown" />
 
             <Spinner
                 android:id="@+id/spinner_subpekerjaan1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/spinner_dropdown_state"
                 android:spinnerMode="dropdown" />
 
             <Spinner
                 android:id="@+id/spinner_subpekerjaan2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/spinner_dropdown_state"
                 android:spinnerMode="dropdown" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -233,7 +249,9 @@
             <Spinner
                 android:id="@+id/spinner_penghasilan"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/spinner_dropdown_state"
                 android:spinnerMode="dropdown" />
 
             <!-- child of form - dynamic -->
@@ -241,12 +259,14 @@
                 android:id="@+id/sub_dynamic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
+                android:orientation="vertical" />
 
             <Spinner
                 android:id="@+id/spinner_anggota"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/spinner_dropdown_state"
                 android:spinnerMode="dropdown" />
 
         </LinearLayout>
@@ -257,6 +277,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
             android:text="@string/submit" />
+
     </LinearLayout>
 
 </ScrollView>

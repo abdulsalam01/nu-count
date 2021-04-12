@@ -3,7 +3,7 @@ package com.example.nucount.core.constant
 object API {
     const val isOffline = true
 
-    val BASE_URL = if (isOffline) "http://192.168.0.108:8800/lakpesdam/" else "network/"
+    val BASE_URL = if (isOffline) "http://192.168.100.38:8800/lakpesdam/" else "network/"
     const val PREFIX = "api/"
 
     // POST

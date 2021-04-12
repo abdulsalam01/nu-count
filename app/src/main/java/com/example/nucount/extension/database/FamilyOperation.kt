@@ -3,7 +3,9 @@ package com.example.nucount.extension.database
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
+import android.database.sqlite.SQLiteOpenHelper
 import com.example.nucount.core.helper.SqlOperation
 import com.example.nucount.model.Family
 import kotlin.collections.ArrayList
@@ -21,8 +23,19 @@ class FamilyOperation(context: Context) : SqlOperation<Family>, DatabaseHandler(
         contentValues.put(ID.plus("_member"), data.idMember)
 
         val success = db.insert(TABLE_FAMILY, null, contentValues)
+        return success
+    }
 
-        db.close()
+    fun create(data: Family, db: SQLiteDatabase): Long {
+        val contentValues = ContentValues()
+
+        contentValues.put(NAMA, data.nama)
+        contentValues.put(HK, data.hk)
+        contentValues.put(USIA, data.usia)
+        contentValues.put(PENDIDIKAN, data.pendidikan)
+        contentValues.put(ID.plus("_member"), data.idMember)
+
+        val success = db.insert(TABLE_FAMILY, null, contentValues)
         return success
     }
 
@@ -35,6 +48,11 @@ class FamilyOperation(context: Context) : SqlOperation<Family>, DatabaseHandler(
         val success = db.delete(TABLE_FAMILY,"${ID.plus("_member")} = $id",null)
 
         db.close()
+        return success
+    }
+
+    fun delete(id: Any, db: SQLiteDatabase): Int {
+        val success = db.delete(TABLE_FAMILY,"${ID.plus("_member")} = $id",null)
         return success
     }
 

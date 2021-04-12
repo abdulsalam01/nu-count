@@ -3,8 +3,9 @@ package com.example.nucount.model
 import java.util.*
 
 data class Member(
+    val id: Int,
     val namaLengkap: String, val nik: String,
-    val statusNikah: String, val tanggalLahir: Date?,
+    val statusNikah: String, val tanggalLahir: String?,
     val tempatLahir: String, val jenisKelamin: String,
     val nomor: String, val kabupaten: String, val kecamatan: String,
     val desa: String, val dusun: String, val rt: String, val rw: String,

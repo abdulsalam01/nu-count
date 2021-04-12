@@ -288,25 +288,17 @@ class InputFragment : Fragment() {
 
         // over internet
         if (connection) {
+            Toast.makeText(requireContext(),
+                "${memberOperation.countByIdSession(idSession)} remaining",
+                Toast.LENGTH_SHORT)
+                .show()
 
-            this.service.inputData(idSession, data).enqueue(object : Callback<ResponseBody> {
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    Snackbar.make(btnSubmit, t.message.toString(), Snackbar.LENGTH_SHORT).show()
-                }
-
-                override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
-                ) {
-                    Snackbar.make(btnSubmit, response.body().toString(), Snackbar.LENGTH_SHORT)
-                        .show()
-                }
-
-            })
-            // offline mode
+            this.getFromLocalRoom(memberOperation.countByIdSession(idSession), idSession)
+            this.onSubmitOverInternet(idSession, data)
+        // offline mode
         } else {
-            val member = Member(data["nama_lengkap"].toString(), data["nik"].toString(),
-                data["status_pernikahan"].toString(), null,
+            val member = Member(0, data["nama_lengkap"].toString(), data["nik"].toString(),
+                data["status_pernikahan"].toString(), data["tanggal_lahir"].toString(),
                 data["tempat_lahir"].toString(), data["jenis_kelamin"].toString(),
                 data["nomor"].toString(), "BANYUWANGI",
                 data["kecamatan"].toString(), data["desa"].toString(),
@@ -317,13 +309,93 @@ class InputFragment : Fragment() {
                 data["anggota"].toString(), idSession, arrFamily
             )
 
-            val status = this.memberOperation.create(member)
-
-            if (status > 0)
-                Toast.makeText(requireContext(), "Berhasil ${status}", Toast.LENGTH_LONG).show()
-            else
-                Toast.makeText(requireContext(), "Gagal rek!", Toast.LENGTH_LONG).show()
+            this.onSubmitOverLocalRoom(member)
         }
+    }
+
+    private fun onSubmitOverLocalRoom(data: Member) {
+        val status = this.memberOperation.create(data)
+
+        if (status > 0) {
+            Toast.makeText(
+                requireContext(), "Berhasil menambahkan ke local: ${status}",
+                Toast.LENGTH_LONG
+            ).show()
+        } else {
+            Toast.makeText(
+                requireContext(), "Gagal menambah ke local!",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private fun getFromLocalRoom(counter: Int, id: Int) {
+        if (counter > 0) {
+            val memberOperation = MemberOperation(requireContext())
+            val localEntry = memberOperation.getByIdPetugas(id)
+
+            for (i in 0..localEntry.size - 1) {
+                val member = localEntry.get(i)
+                val data = HashMap<String, Any>()
+
+                data["nama_lengkap"] = member.namaLengkap
+                data["nik"] = member.nik
+                data["status_pernikahan"] = member.statusNikah
+                data["tanggal_lahir"] = member.tanggalLahir.toString()
+                data["tempat_lahir"] = member.tempatLahir
+                data["jenis_kelamin"] = member.jenisKelamin
+                data["nomor"] = member.nomor
+                data["kecamatan"] = member.kecamatan
+                data["desa"] = member.desa
+                data["dusun"] = member.dusun
+                data["rt"] = member.rt
+                data["rw"] = member.rw
+                data["pendidikan"] = member.pendidikan.toString()
+                data["pekerjaan"] = member.pekerjaan.toString()
+                data["sub_pekerjaan"] = member.subPekerjaan1.toString()
+                data["sub_pekerjaan_2"] = member.subPekerjaan2.toString()
+                data["sub_pekerjaan_3"] = member.subPekerjaan3.toString()
+                data["penghasilan"] = member.penghasilan.toString()
+                data["anggota"] = member.anggota
+
+                val jsonArrFamily = JSONArray()
+                if (member.family!!.size > 0) {
+
+                    for (j in 0..member.family.size - 1) {
+                        val family = member.family.get(j)
+                        val jsonObjFamily = JSONObject()
+
+                        jsonObjFamily.put("nama_keluarga", family.nama)
+                        jsonObjFamily.put("usia", family.usia)
+                        jsonObjFamily.put("hk_keluarga", family.hk)
+                        jsonObjFamily.put("pendidikan", family.pendidikan)
+                        jsonArrFamily.put(j, jsonObjFamily)
+                    }
+                }
+
+                data["keluarga"] = jsonArrFamily.toString()
+                this.onSubmitOverInternet(id, data)
+                // delete - on over internet
+                this.memberOperation.delete(member.id)
+            }
+        }
+    }
+
+    private fun onSubmitOverInternet(idSession: Int, data: HashMap<String, Any>) {
+        this.service.inputData(idSession, data).enqueue(object : Callback<ResponseBody> {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Snackbar.make(btnSubmit, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+            }
+
+            override fun onResponse(
+                call: Call<ResponseBody>,
+                response: Response<ResponseBody>
+            ) {
+                Snackbar.make(btnSubmit, "Berhasil upload ke cloud!", Snackbar.LENGTH_SHORT)
+                    .show()
+            }
+
+        })
     }
 
     private fun loadStatus() {

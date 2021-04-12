@@ -53,7 +53,7 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
                         val family = Family(values.nama, values.usia,
                             values.hk, values.pendidikan, success.toInt())
 
-                        familyOperation.create(family)
+                        familyOperation.create(family, db)
                     }
                 }
 
@@ -74,10 +74,22 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
     }
 
     override fun delete(id: Any): Int {
+        val familyOperation = FamilyOperation(context)
         val db = this.writableDatabase
-        val success = db.delete(TABLE_MEMBER,"$ID = $id",null)
+        var success = 0
 
-        db.close()
+        db.beginTransaction()
+        try {
+            success = db.delete(TABLE_MEMBER, "$ID = $id", null)
+            familyOperation.delete(success, db)
+            db.setTransactionSuccessful()
+        } catch (e: Exception) {
+            e.message
+        } finally {
+            db.endTransaction()
+            db.close()
+        }
+
         return success
     }
 
@@ -101,10 +113,11 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
                 val family = FamilyOperation(context).
                     getAllByIdMember(cursor.getInt(cursor.getColumnIndex(ID)))
 
-                val member = Member(cursor.getString(cursor.getColumnIndex(NAMA_LENGKAP)),
+                val member = Member(cursor.getInt(cursor.getColumnIndex(ID)),
+                    cursor.getString(cursor.getColumnIndex(NAMA_LENGKAP)),
                     cursor.getString(cursor.getColumnIndex(NIK)),
                     cursor.getString(cursor.getColumnIndex(STATUS_NIKAH)),
-                    Date(cursor.getString(cursor.getColumnIndex(TANGGAL_LAHIR))),
+                    cursor.getString(cursor.getColumnIndex(TANGGAL_LAHIR)),
                     cursor.getString(cursor.getColumnIndex(TEMPAT_LAHIR)),
                     cursor.getString(cursor.getColumnIndex(JENIS_KELAMIN)),
                     cursor.getString(cursor.getColumnIndex(NOMOR)),
@@ -134,7 +147,62 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
     }
 
     override fun getById(id: Any): Member {
-        TODO("Not yet implemented")
+        TODO()
+    }
+
+    fun getByIdPetugas(id: Any): List<Member> {
+        val data: ArrayList<Member> = ArrayList()
+        val selectQuery = "SELECT a.* " +
+                "FROM $TABLE_MEMBER a " +
+                "WHERE $ID_PETUGAS = $id"
+
+        val db = this.readableDatabase
+        var cursor: Cursor? = null
+
+        try{
+            cursor = db.rawQuery(selectQuery, null)
+        }catch (e: SQLiteException) {
+            db.execSQL(selectQuery)
+            return ArrayList()
+        }
+
+        if (cursor.moveToFirst()) {
+            do {
+                val family = FamilyOperation(context).
+                getAllByIdMember(cursor.getInt(cursor.getColumnIndex(ID)))
+
+                val member = Member(
+                    cursor.getInt(cursor.getColumnIndex(ID)),
+                    cursor.getString(cursor.getColumnIndex(NAMA_LENGKAP)),
+                    cursor.getString(cursor.getColumnIndex(NIK)),
+                    cursor.getString(cursor.getColumnIndex(STATUS_NIKAH)),
+                    cursor.getString(cursor.getColumnIndex(TANGGAL_LAHIR)),
+                    cursor.getString(cursor.getColumnIndex(TEMPAT_LAHIR)),
+                    cursor.getString(cursor.getColumnIndex(JENIS_KELAMIN)),
+                    cursor.getString(cursor.getColumnIndex(NOMOR)),
+                    cursor.getString(cursor.getColumnIndex(KABUPATEN)),
+                    cursor.getString(cursor.getColumnIndex(KECAMATAN)),
+                    cursor.getString(cursor.getColumnIndex(DESA)),
+                    cursor.getString(cursor.getColumnIndex(DUSUN)),
+                    cursor.getString(cursor.getColumnIndex(RT)),
+                    cursor.getString(cursor.getColumnIndex(RW)),
+                    cursor.getString(cursor.getColumnIndex(PENDIDIKAN)),
+                    cursor.getString(cursor.getColumnIndex(PEKERJAAN)),
+                    cursor.getString(cursor.getColumnIndex(SUB_PEKERJAAN_1)),
+                    cursor.getString(cursor.getColumnIndex(SUB_PEKERJAAN_2)),
+                    cursor.getString(cursor.getColumnIndex(SUB_PEKERJAAN_3)),
+                    cursor.getString(cursor.getColumnIndex(PENGHASILAN)),
+                    cursor.getString(cursor.getColumnIndex(ANGGOTA)),
+                    cursor.getInt(cursor.getColumnIndex(ID_PETUGAS)),
+                    family
+                )
+
+                data.add(member)
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        return data
     }
 
     override fun deleteAll(): Int {
@@ -143,5 +211,29 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
 
         db.close()
         return success
+    }
+
+    fun count(): Int {
+        val db = this.readableDatabase
+        val query = "SELECT $ID FROM $TABLE_MEMBER"
+        val cursor: Cursor? = db.rawQuery(query, null)
+        val count = cursor!!.count
+
+        db.close()
+        cursor.close()
+
+        return count
+    }
+
+    fun countByIdSession(id: Any): Int {
+        val db = this.readableDatabase
+        val query = "SELECT $ID FROM $TABLE_MEMBER WHERE $ID_PETUGAS = $id"
+        val cursor: Cursor? = db.rawQuery(query, null)
+        val count = cursor!!.count
+
+        db.close()
+        cursor.close()
+
+        return count
     }
 }
