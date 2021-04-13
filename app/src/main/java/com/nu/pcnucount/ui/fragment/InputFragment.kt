@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import com.google.android.material.button.MaterialButton
 import com.nu.pcnucount.R
 import com.nu.pcnucount.core.constant.Service
 import com.nu.pcnucount.core.helper.ConnectionChecker
@@ -54,9 +55,9 @@ class InputFragment : Fragment() {
 
     private lateinit var service: Service
 
-    private lateinit var btnAddDynamicForm: Button
-    private lateinit var btnRemoveDynamicForm: Button
-    private lateinit var btnSubmit: Button
+    private lateinit var btnAddDynamicForm: MaterialButton
+    private lateinit var btnRemoveDynamicForm: MaterialButton
+    private lateinit var btnSubmit: MaterialButton
 
     private lateinit var spinnerStatus: Spinner
     private lateinit var spinnerJenisKelamin: Spinner
@@ -145,11 +146,11 @@ class InputFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         this.service = ServiceManager.getInstance()
-        this.user = Session.getCurrentUser(requireContext())
+        //this.user = Session.getCurrentUser(requireContext())
 
         initLoad()
 
-        this.tvNameUser.setText(user.nama)
+        //this.tvNameUser.setText(user.nama)
 
         this.btnAddDynamicForm.setOnClickListener {
             if (!isOverThan59) {
@@ -408,7 +409,11 @@ class InputFragment : Fragment() {
     private fun onSubmitOverInternet(idSession: Int, data: HashMap<String, Any>) {
         this.service.inputData(idSession, data).enqueue(object : Callback<ResponseBody> {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Snackbar.make(btnSubmit, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                //Snackbar.make(btnSubmit, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                if(context != null) {
+                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
 
             override fun onResponse(
@@ -427,8 +432,9 @@ class InputFragment : Fragment() {
                         )
                             .show()
                     } else {
-                        Snackbar.make(btnSubmit, "Berhasil upload ke cloud!", Snackbar.LENGTH_SHORT)
-                            .show()
+//                        Snackbar.make(btnSubmit, "Berhasil upload ke cloud!", Snackbar.LENGTH_SHORT)
+//                            .show()
+                        Toast.makeText(requireContext(), "Berhasil upload ke cloud!", Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: JSONException) {
                     Log.d("HAHAHA", e.message.toString())
@@ -481,7 +487,11 @@ class InputFragment : Fragment() {
         this.service.getKecamatan().enqueue(object : Callback<Kecamatan.Response> {
 
             override fun onFailure(call: Call<Kecamatan.Response>, t: Throwable) {
-                Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                //Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                if(context != null) {
+                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
 
             override fun onResponse(
@@ -506,7 +516,11 @@ class InputFragment : Fragment() {
     private fun loadDesa() {
         this.service.getDesa().enqueue(object : Callback<Desa.Response> {
             override fun onFailure(call: Call<Desa.Response>, t: Throwable) {
-                Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                //Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                if(context != null) {
+                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
 
             override fun onResponse(call: Call<Desa.Response>, response: Response<Desa.Response>) {
@@ -528,7 +542,11 @@ class InputFragment : Fragment() {
     private fun loadDusun() {
         this.service.getDusun().enqueue(object : Callback<Dusun.Response> {
             override fun onFailure(call: Call<Dusun.Response>, t: Throwable) {
-                Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                //Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                if(context != null) {
+                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
 
             override fun onResponse(
@@ -553,7 +571,11 @@ class InputFragment : Fragment() {
     private fun loadRt() {
         this.service.getRt().enqueue(object : Callback<Rt.Response> {
             override fun onFailure(call: Call<Rt.Response>, t: Throwable) {
-                Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                //Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                if(context != null) {
+                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
 
             override fun onResponse(call: Call<Rt.Response>, response: Response<Rt.Response>) {
@@ -575,7 +597,11 @@ class InputFragment : Fragment() {
         this.service.getRw().enqueue(object : Callback<Rw.Response> {
 
             override fun onFailure(call: Call<Rw.Response>, t: Throwable) {
-                Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                //Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                if(context != null) {
+                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
 
             override fun onResponse(call: Call<Rw.Response>, response: Response<Rw.Response>) {
@@ -597,7 +623,11 @@ class InputFragment : Fragment() {
     private fun loadPekerjaan() {
         this.service.getPekerjaan().enqueue(object : Callback<Pekerjaan.Response> {
             override fun onFailure(call: Call<Pekerjaan.Response>, t: Throwable) {
-                Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                //Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                if(context != null) {
+                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
 
             override fun onResponse(
@@ -660,7 +690,11 @@ class InputFragment : Fragment() {
     private fun loadSubPekerjaan1(id: Int) {
         this.service.getSubPekerjaan1(id).enqueue(object : Callback<SubPekerjaan1.Response> {
             override fun onFailure(call: Call<SubPekerjaan1.Response>, t: Throwable) {
-                Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                //Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                if(context != null) {
+                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
 
             override fun onResponse(
@@ -685,7 +719,11 @@ class InputFragment : Fragment() {
     private fun loadSubPekerjaan2(id: Int) {
         this.service.getSubPekerjaan2(id).enqueue(object : Callback<SubPekerjaan2.Response> {
             override fun onFailure(call: Call<SubPekerjaan2.Response>, t: Throwable) {
-                Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                //Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
+                if(context != null) {
+                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
 
             override fun onResponse(

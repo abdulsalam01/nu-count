@@ -16,7 +16,7 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.NUCount"
         tools:targetApi="m">
-        <activity android:name="com.nu.pcnucount.ui.activity.LoginActivity">
+        <activity android:name="com.nu.pcnucount.ui.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.nu.pcnucount.ui.activity.MainActivity"
+            android:name="com.nu.pcnucount.ui.activity.LoginActivity"
             android:windowSoftInputMode="adjustPan"/>
     </application>
 

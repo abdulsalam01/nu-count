@@ -2,7 +2,9 @@ package com.nu.pcnucount.ui.activity
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.nu.pcnucount.R
@@ -22,6 +24,8 @@ import org.json.JSONObject
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var bottomNav: BottomNavigationView
+
+    private var exit: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,4 +84,16 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             GlobalHelper.loadFragment(context!!, notif)
         }
     }
+
+//    override fun onBackPressed() {
+//        if (exit) {
+//            finish()
+//        } else {
+//            Toast.makeText(this, "Tekan sekali lagi untuk keluar", Toast.LENGTH_LONG).show()
+//            exit = true
+//            Handler().postDelayed({ exit = false }, 2000)
+//        }
+//        //super.onBackPressed()
+//    }
+
 }
