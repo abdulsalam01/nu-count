@@ -10,6 +10,7 @@
 
     <color name="baseColor">#009889</color>
     <color name="fontColorHeading">#332c2b</color>
+    <color name="dividerColor">#8C8C8C</color>
 
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#009889</color>
 

@@ -25,9 +25,9 @@
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 app:cardCornerRadius="50dp"
-                app:strokeColor="@color/baseColor"
                 app:contentPadding="5dp"
-                app:strokeWidth="3dp">
+                app:strokeColor="@color/baseColor"
+                app:strokeWidth="2.5dp">
 
                 <ImageView
                     android:id="@+id/profileImg"
@@ -37,6 +37,17 @@
                     android:scaleType="centerCrop" />
 
             </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tv_name_user"
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/profileWrapper"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:textColor="@color/fontColorHeading"
+                android:textSize="20sp" />
 
         </RelativeLayout>
 
@@ -76,6 +87,7 @@
 
         <Spinner
             android:id="@+id/spinner_status"
+            style="@style/Spinner"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="15dp"
@@ -94,6 +106,10 @@
                 android:id="@+id/txt_tanggal_lahir"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:hint="@string/hint_tgl_lahir"
                 android:textSize="14sp" />
 
@@ -104,6 +120,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="15dp"
+            android:enabled="false"
             app:errorEnabled="true"
             app:hintEnabled="false">
 
@@ -111,7 +128,7 @@
                 android:id="@+id/txt_umur"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="@string/app_name"
+                android:hint="@string/hint_umur"
                 android:textSize="14sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -135,6 +152,7 @@
 
         <Spinner
             android:id="@+id/spinner_jenis_kelamin"
+            style="@style/Spinner"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="15dp"
@@ -160,6 +178,7 @@
 
         <Spinner
             android:id="@+id/spinner_kabupaten"
+            style="@style/Spinner"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="15dp"
@@ -168,6 +187,7 @@
 
         <Spinner
             android:id="@+id/spinner_kecamatan"
+            style="@style/Spinner"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="15dp"
@@ -176,6 +196,7 @@
 
         <Spinner
             android:id="@+id/spinner_desa"
+            style="@style/Spinner"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="15dp"
@@ -184,6 +205,7 @@
 
         <Spinner
             android:id="@+id/spinner_dusun"
+            style="@style/Spinner"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="15dp"
@@ -192,6 +214,7 @@
 
         <Spinner
             android:id="@+id/spinner_rt"
+            style="@style/Spinner"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="15dp"
@@ -200,6 +223,7 @@
 
         <Spinner
             android:id="@+id/spinner_rw"
+            style="@style/Spinner"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="15dp"
@@ -213,16 +237,41 @@
             android:orientation="vertical"
             android:visibility="gone">
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp">
+
+                <TextView
+                    android:id="@+id/tv_data_pekerjaan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/data_pekerjaan"
+                    android:textColor="@color/fontColorHeading"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@id/tv_data_pekerjaan"
+                    android:background="@color/dividerColor" />
+
+            </RelativeLayout>
+
             <Spinner
                 android:id="@+id/spinner_pendidikan"
+                style="@style/Spinner"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/spinner_dropdown_state"
                 android:spinnerMode="dropdown" />
 
             <Spinner
                 android:id="@+id/spinner_pekerjaan"
+                style="@style/Spinner"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="15dp"
@@ -231,6 +280,7 @@
 
             <Spinner
                 android:id="@+id/spinner_subpekerjaan1"
+                style="@style/Spinner"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="15dp"
@@ -239,6 +289,7 @@
 
             <Spinner
                 android:id="@+id/spinner_subpekerjaan2"
+                style="@style/Spinner"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="15dp"
@@ -246,20 +297,25 @@
                 android:spinnerMode="dropdown" />
 
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/TextInputLayoutStyle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                app:errorEnabled="true"
+                app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/txt_subpekerjaan_3"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/white"
-                    android:hint="@string/app_name" />
+                    android:textSize="14sp"
+                    android:hint="@string/subpekerjaan_3" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <Spinner
                 android:id="@+id/spinner_penghasilan"
+                style="@style/Spinner"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="15dp"
@@ -275,6 +331,7 @@
 
             <Spinner
                 android:id="@+id/spinner_anggota"
+                style="@style/Spinner"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="15dp"
@@ -289,29 +346,35 @@
             android:layout_marginTop="15dp"
             android:orientation="horizontal">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_add_dynamic_form"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="0.5"
-                android:text="@string/add" />
+                android:text="@string/add"
+                android:textSize="15sp"
+                app:icon="@drawable/ic_baseline_add_circle_outline_24" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_remove_dynamic_form"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_weight="0.5"
-                android:text="@string/remove" />
+                android:text="@string/remove"
+                android:textSize="15sp"
+                app:icon="@drawable/ic_baseline_remove_circle_outline_24" />
 
         </LinearLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_submit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginBottom="45dp"
-            android:text="@string/submit" />
+            android:text="@string/submit"
+            android:textSize="15sp"
+            app:icon="@drawable/ic_baseline_save_alt_24" />
 
     </LinearLayout>
 

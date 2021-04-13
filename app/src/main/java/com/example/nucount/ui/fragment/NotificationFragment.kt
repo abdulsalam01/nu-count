@@ -5,12 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.nucount.R
+import com.example.nucount.core.constant.API
 import com.example.nucount.extension.adapter.NotificationAdapter
 import com.example.nucount.extension.data.NotificationData
 import com.example.nucount.model.Notification
+import com.onesignal.OneSignal
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,9 +30,8 @@ class NotificationFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    private lateinit var notificationList: List<Notification>
-    private lateinit var rvNotification: RecyclerView
-    private lateinit var adapterNotification: NotificationAdapter
+    private var notifString: String = "Tidak ada notifikasi"
+    private lateinit var tvNotif: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,18 +46,26 @@ class NotificationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notification, container, false)
+        val v = inflater.inflate(R.layout.fragment_notification, container, false)
+
+        val bundle = arguments
+        if (bundle != null) notifString = bundle.getString("data", "Tidak ada notifikasi")
+
+        this.tvNotif = v.findViewById(R.id.tv_notif)
+        this.tvNotif.text = notifString
+
+        return v
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        this.notificationList = ArrayList()
-        this.notificationList = NotificationData.dummy()
-        this.adapterNotification = NotificationAdapter(this.notificationList)
-        this.rvNotification = view.findViewById(R.id.rv_notification) as RecyclerView
-
-        this.rvNotification.adapter = adapterNotification
-        this.rvNotification.layoutManager = LinearLayoutManager(context)
+//        this.notificationList = ArrayList()
+//        this.notificationList = NotificationData.dummy()
+//        this.adapterNotification = NotificationAdapter(this.notificationList)
+//        this.rvNotification = view.findViewById(R.id.rv_notification) as RecyclerView
+//
+//        this.rvNotification.adapter = adapterNotification
+//        this.rvNotification.layoutManager = LinearLayoutManager(context)
     }
 }

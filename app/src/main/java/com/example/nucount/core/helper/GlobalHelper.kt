@@ -22,7 +22,6 @@ object GlobalHelper {
             .supportFragmentManager
             .beginTransaction()
             .replace(R.id.container, fragment)
-            .addToBackStack(null)
             .commit()
 
         return true

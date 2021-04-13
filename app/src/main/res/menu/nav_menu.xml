@@ -3,13 +3,13 @@
 
     <item
         android:id="@+id/input_menu"
-        android:title="@string/input_menu"
+        android:title="@string/input"
         android:icon="@drawable/ic_baseline_edit_24"/>
 
-    <item
-        android:id="@+id/notification_menu"
-        android:title="@string/notification_menu"
-        android:icon="@drawable/ic_baseline_notifications_24"/>
+<!--    <item-->
+<!--        android:id="@+id/notification_menu"-->
+<!--        android:title="@string/notification_menu"-->
+<!--        android:icon="@drawable/ic_baseline_notifications_24"/>-->
 
     <item
         android:id="@+id/exit_menu"

@@ -1,8 +1,9 @@
 <resources>
-    <string name="app_name">NUCount</string>
+    <string name="app_name">NU Count</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="login">Login</string>
+    <string name="input">Input Data</string>
     <string name="exit_menu">Logout</string>
 
     <string-array name="status_nikah">
@@ -58,8 +59,6 @@
     <string name="hint_password">Password</string>
 
     <!-- Form Input -->
-    <string name="add">Tambah</string>
-    <string name="remove">Hapus</string>
     <string name="hint_nama">Masukan Nama</string>
     <string name="hint_nama_lengkap">Masukan Nama Lengkap</string>
     <string name="hint_nik">Masukan NIK</string>
@@ -67,6 +66,12 @@
     <string name="hint_tempat_lahir">Masukan Tempat Lahir</string>
     <string name="hint_usia">Masukan Usia</string>
     <string name="hint_no_hp">Masukan Nomor Hp</string>
+    <string name="hint_umur">Umur otomatis setelah tgl lahir diinput</string>
+    <string name="data_pekerjaan">Data Pekerjaan</string>
+    <string name="data_keluarga">Data Keluarga</string>
+    <string name="add">Tambah</string>
+    <string name="remove">Hapus</string>
     <string name="submit">Simpan</string>
+    <string name="subpekerjaan_3">Sub Pekerjaan 3 (Opsional)</string>
 
 </resources>

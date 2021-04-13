@@ -6,10 +6,10 @@
     android:orientation="vertical"
     tools:context=".ui.fragment.NotificationFragment">
 
-    <!-- rv-list -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_notification"
+    <TextView
+        android:id="@+id/tv_notif"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:text="@string/app_name" />
 
 </LinearLayout>

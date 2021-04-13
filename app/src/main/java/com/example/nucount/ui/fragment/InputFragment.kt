@@ -1,9 +1,12 @@
 package com.example.nucount.ui.fragment
 
+import android.app.DatePickerDialog
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,10 +24,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import okhttp3.ResponseBody
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -68,7 +73,7 @@ class InputFragment : Fragment() {
     private lateinit var spinnerPenghasilan: Spinner
     private lateinit var spinnerAnggota: Spinner
 
-    private lateinit var txtNamaLengkap : TextInputEditText
+    private lateinit var txtNamaLengkap: TextInputEditText
     private lateinit var txtNik: TextInputEditText
     private lateinit var txtTanggalLahir: TextInputEditText // yyyy-mm-dd
     private lateinit var txtTempatLahir: TextInputEditText
@@ -80,6 +85,10 @@ class InputFragment : Fragment() {
     private lateinit var formSub: LinearLayout
 
     private var isOverThan59: Boolean = true
+
+    private lateinit var user: User
+
+    private lateinit var tvNameUser: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,6 +132,7 @@ class InputFragment : Fragment() {
         this.txtSubPekerjaan3 = v.findViewById(R.id.txt_subpekerjaan_3)
         this.formFamily = v.findViewById(R.id.sub_dynamic)
         this.formSub = v.findViewById(R.id.sub_form)
+        this.tvNameUser = v.findViewById(R.id.tv_name_user)
 
         return v
     }
@@ -135,12 +145,16 @@ class InputFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         this.service = ServiceManager.getInstance()
+        this.user = Session.getCurrentUser(requireContext())
 
         initLoad()
 
+        this.tvNameUser.setText(user.nama)
+
         this.btnAddDynamicForm.setOnClickListener {
             if (!isOverThan59) {
-                val inflater = requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val inflater =
+                    requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
                 val rowFamily = inflater.inflate(R.layout.row_family, null)
 
                 this.formFamily.addView(rowFamily, this.formFamily.childCount - 1)
@@ -150,6 +164,10 @@ class InputFragment : Fragment() {
         this.btnRemoveDynamicForm.setOnClickListener {
             if (this.formFamily.childCount - 1 > -1)
                 this.formFamily.removeView(this.formFamily.get(this.formFamily.childCount - 1))
+        }
+
+        this.txtTanggalLahir.setOnClickListener {
+            showDatePicker()
         }
 
         this.txtUmur.addTextChangedListener(object : TextWatcher {
@@ -188,21 +206,22 @@ class InputFragment : Fragment() {
         }
 
 
-        this.spinnerSubPekerjaan1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        this.spinnerSubPekerjaan1.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
 
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                val subPekerjaan1 = parent!!.getItemAtPosition(position) as SubPekerjaan1
-                loadSubPekerjaan2(subPekerjaan1.id_sub.toInt())
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val subPekerjaan1 = parent!!.getItemAtPosition(position) as SubPekerjaan1
+                    loadSubPekerjaan2(subPekerjaan1.id_sub.toInt())
+                }
             }
-        }
 
         this.btnSubmit.setOnClickListener {
             onSubmit(ConnectionChecker.isNetworkAvailable(requireContext()))
@@ -250,7 +269,7 @@ class InputFragment : Fragment() {
         data["penghasilan"] = ""
         data["anggota"] = ""
 
-        if(!isOverThan59) {
+        if (!isOverThan59) {
             // some of rest code
             data["pendidikan"] = spinnerPendidikan.selectedItemPosition + 1
             data["pekerjaan"] = (spinnerPekerjaan.selectedItem as Pekerjaan).id_pekerjaan
@@ -265,7 +284,8 @@ class InputFragment : Fragment() {
                 val txtNama = this.formFamily[i].findViewById<TextInputEditText>(R.id.txt_nama)
                 val txtUsia = this.formFamily[i].findViewById<TextInputEditText>(R.id.txt_usia)
                 val spinnerHk = this.formFamily[i].findViewById<Spinner>(R.id.spinner_hk)
-                val spinnerPendidikanOr = this.formFamily[i].findViewById<Spinner>(R.id.spinner_pendidikan_or)
+                val spinnerPendidikanOr =
+                    this.formFamily[i].findViewById<Spinner>(R.id.spinner_pendidikan_or)
 
                 val jsonObjFamily = JSONObject()
                 jsonObjFamily.put("nama_keluarga", txtNama.text)
@@ -274,7 +294,8 @@ class InputFragment : Fragment() {
                 jsonObjFamily.put("pendidikan", spinnerPendidikanOr.selectedItemPosition + 1)
                 jsonArrFamily.put(i, jsonObjFamily)
 
-                val family = Family(jsonObjFamily.getString("nama_keluarga"),
+                val family = Family(
+                    jsonObjFamily.getString("nama_keluarga"),
                     jsonObjFamily.getString("usia"),
                     jsonObjFamily.getString("hk_keluarga"),
                     jsonObjFamily.getString("pendidikan"),
@@ -288,16 +309,19 @@ class InputFragment : Fragment() {
 
         // over internet
         if (connection) {
-            Toast.makeText(requireContext(),
+            Toast.makeText(
+                requireContext(),
                 "${memberOperation.countByIdSession(idSession)} remaining",
-                Toast.LENGTH_SHORT)
+                Toast.LENGTH_SHORT
+            )
                 .show()
 
             this.getFromLocalRoom(memberOperation.countByIdSession(idSession), idSession)
             this.onSubmitOverInternet(idSession, data)
-        // offline mode
+            // offline mode
         } else {
-            val member = Member(0, data["nama_lengkap"].toString(), data["nik"].toString(),
+            val member = Member(
+                0, data["nama_lengkap"].toString(), data["nik"].toString(),
                 data["status_pernikahan"].toString(), data["tanggal_lahir"].toString(),
                 data["tempat_lahir"].toString(), data["jenis_kelamin"].toString(),
                 data["nomor"].toString(), "BANYUWANGI",
@@ -391,8 +415,24 @@ class InputFragment : Fragment() {
                 call: Call<ResponseBody>,
                 response: Response<ResponseBody>
             ) {
-                Snackbar.make(btnSubmit, "Berhasil upload ke cloud!", Snackbar.LENGTH_SHORT)
-                    .show()
+                try {
+                    val jsonObject = JSONObject(response.body()!!.string())
+                    val success = jsonObject.getBoolean("success")
+
+                    if (!success) {
+                        Toast.makeText(
+                            requireContext(),
+                            jsonObject.getJSONArray("data").toString(),
+                            Toast.LENGTH_LONG
+                        )
+                            .show()
+                    } else {
+                        Snackbar.make(btnSubmit, "Berhasil upload ke cloud!", Snackbar.LENGTH_SHORT)
+                            .show()
+                    }
+                } catch (e: JSONException) {
+                    Log.d("HAHAHA", e.message.toString())
+                }
             }
 
         })
@@ -401,7 +441,8 @@ class InputFragment : Fragment() {
     private fun loadStatus() {
         val data = resources.getStringArray(R.array.status_nikah)
         val arrayAdapter = data.let {
-            ArrayAdapter(requireContext(),
+            ArrayAdapter(
+                requireContext(),
                 android.R.layout.simple_spinner_item, it
             )
         }
@@ -413,7 +454,8 @@ class InputFragment : Fragment() {
     private fun loadJenisKelamin() {
         val data = resources.getStringArray(R.array.jenis_kelamin)
         val arrayAdapter = data.let {
-            ArrayAdapter(requireContext(),
+            ArrayAdapter(
+                requireContext(),
                 android.R.layout.simple_spinner_item, it
             )
         }
@@ -425,7 +467,8 @@ class InputFragment : Fragment() {
     private fun loadKabupaten() {
         val data = resources.getStringArray(R.array.kabupaten)
         val arrayAdapter = data.let {
-            ArrayAdapter(requireContext(),
+            ArrayAdapter(
+                requireContext(),
                 android.R.layout.simple_spinner_item, it
             )
         }
@@ -447,7 +490,8 @@ class InputFragment : Fragment() {
             ) {
                 val data = response.body()?.data
                 val arrayAdapter = data?.let {
-                    ArrayAdapter(context!!,
+                    ArrayAdapter(
+                        context!!,
                         android.R.layout.simple_spinner_item, it
                     )
                 }
@@ -468,7 +512,8 @@ class InputFragment : Fragment() {
             override fun onResponse(call: Call<Desa.Response>, response: Response<Desa.Response>) {
                 val data = response.body()?.data
                 val arrayAdapter = data?.let {
-                    ArrayAdapter(context!!,
+                    ArrayAdapter(
+                        context!!,
                         android.R.layout.simple_spinner_item, it
                     )
                 }
@@ -492,7 +537,8 @@ class InputFragment : Fragment() {
             ) {
                 val data = response.body()?.data
                 val arrayAdapter = data?.let {
-                    ArrayAdapter(context!!,
+                    ArrayAdapter(
+                        context!!,
                         android.R.layout.simple_spinner_item, it
                     )
                 }
@@ -513,7 +559,8 @@ class InputFragment : Fragment() {
             override fun onResponse(call: Call<Rt.Response>, response: Response<Rt.Response>) {
                 val data = response.body()?.data
                 val arrayAdapter = data?.let {
-                    ArrayAdapter(context!!,
+                    ArrayAdapter(
+                        context!!,
                         android.R.layout.simple_spinner_item, it
                     )
                 }
@@ -534,7 +581,8 @@ class InputFragment : Fragment() {
             override fun onResponse(call: Call<Rw.Response>, response: Response<Rw.Response>) {
                 val data = response.body()?.data
                 val arrayAdapter = data?.let {
-                    ArrayAdapter(context!!,
+                    ArrayAdapter(
+                        context!!,
                         android.R.layout.simple_spinner_item, it
                     )
                 }
@@ -558,7 +606,8 @@ class InputFragment : Fragment() {
             ) {
                 val data = response.body()?.data
                 val arrayAdapter = data?.let {
-                    ArrayAdapter(context!!,
+                    ArrayAdapter(
+                        context!!,
                         android.R.layout.simple_spinner_item, it
                     )
                 }
@@ -572,8 +621,9 @@ class InputFragment : Fragment() {
     private fun loadPendidikan() {
         val data = resources.getStringArray(R.array.pendidikan)
         val arrayAdapter = data.let {
-            ArrayAdapter(requireContext(),
-                    android.R.layout.simple_spinner_item, it
+            ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_item, it
             )
         }
 
@@ -584,8 +634,9 @@ class InputFragment : Fragment() {
     private fun loadPenghasilan() {
         val data = resources.getStringArray(R.array.penghasilan)
         val arrayAdapter = data.let {
-            ArrayAdapter(requireContext(),
-                    android.R.layout.simple_spinner_item, it
+            ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_item, it
             )
         }
 
@@ -596,8 +647,9 @@ class InputFragment : Fragment() {
     private fun loadAnggota() {
         val data = resources.getStringArray(R.array.anggota)
         val arrayAdapter = data.let {
-            ArrayAdapter(requireContext(),
-                    android.R.layout.simple_spinner_item, it
+            ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_item, it
             )
         }
 
@@ -617,7 +669,8 @@ class InputFragment : Fragment() {
             ) {
                 val data = response.body()?.data
                 val arrayAdapter = data?.let {
-                    ArrayAdapter(context!!,
+                    ArrayAdapter(
+                        context!!,
                         android.R.layout.simple_spinner_item, it
                     )
                 }
@@ -641,7 +694,8 @@ class InputFragment : Fragment() {
             ) {
                 val data = response.body()?.data
                 val arrayAdapter = data?.let {
-                    ArrayAdapter(context!!,
+                    ArrayAdapter(
+                        context!!,
                         android.R.layout.simple_spinner_item, it
                     )
                 }
@@ -651,4 +705,53 @@ class InputFragment : Fragment() {
             }
         })
     }
+
+    private fun showDatePicker() {
+        val localeID = Locale("in", "ID")
+        val format = SimpleDateFormat("yyyy-MM-dd", localeID)
+        val newDate = Calendar.getInstance()
+        val calendar = Calendar.getInstance()
+        val getYear = calendar.get(Calendar.YEAR)
+        val getMonth = calendar.get(Calendar.MONTH)
+        val getDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val dateSetListener =
+                DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+                    newDate.set(year, month, dayOfMonth)
+                    this.txtTanggalLahir.setText(format.format(newDate.time))
+                    this.txtUmur.setText(calculateAge(newDate.timeInMillis).toString())
+                }
+            activity?.let { DatePickerDialog(it, dateSetListener, getYear, getMonth, getDay) }
+        } else {
+            activity?.let {
+                DatePickerDialog(
+                    it,
+                    DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+                        newDate.set(year, month, dayOfMonth)
+                        this.txtTanggalLahir.setText(format.format(newDate.time))
+                        this.txtUmur.setText(calculateAge(newDate.timeInMillis).toString())
+                    },
+                    getYear,
+                    getMonth,
+                    getDay
+                )
+            }
+        }
+        datePickerDialog?.show()
+    }
+
+    fun calculateAge(date: Long): Int {
+        val dob = Calendar.getInstance()
+        dob.timeInMillis = date
+        val today = Calendar.getInstance()
+        var age: Int = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR)
+        if (today.get(Calendar.DAY_OF_MONTH) < dob.get(Calendar.DAY_OF_MONTH)) {
+            age--
+        } else {
+            Toast.makeText(context, "Salah", Toast.LENGTH_LONG)
+        }
+        return age
+    }
+
 }
