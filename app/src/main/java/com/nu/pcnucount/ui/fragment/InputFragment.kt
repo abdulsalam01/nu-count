@@ -146,11 +146,11 @@ class InputFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         this.service = ServiceManager.getInstance()
-        //this.user = Session.getCurrentUser(requireContext())
+        this.user = Session.getCurrentUser(requireContext())
 
         initLoad()
 
-        //this.tvNameUser.setText(user.nama)
+        this.tvNameUser.setText(user.nama)
 
         this.btnAddDynamicForm.setOnClickListener {
             if (!isOverThan59) {

@@ -16,7 +16,7 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.NUCount"
         tools:targetApi="m">
-        <activity android:name="com.nu.pcnucount.ui.activity.MainActivity">
+        <activity android:name="com.nu.pcnucount.ui.activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
