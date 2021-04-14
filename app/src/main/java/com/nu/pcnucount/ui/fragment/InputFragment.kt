@@ -23,6 +23,7 @@ import com.nu.pcnucount.extension.singleton.ServiceManager
 import com.nu.pcnucount.model.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONException
@@ -80,7 +81,9 @@ class InputFragment : Fragment() {
     private lateinit var txtTempatLahir: TextInputEditText
     private lateinit var txtNomorHp: TextInputEditText
     private lateinit var txtUmur: TextInputEditText
+    private lateinit var txtUniversitas: TextInputEditText
     private lateinit var txtSubPekerjaan3: TextInputEditText
+    private lateinit var tvNameUser: TextView
 
     private lateinit var formFamily: LinearLayout
     private lateinit var formSub: LinearLayout
@@ -89,7 +92,7 @@ class InputFragment : Fragment() {
 
     private lateinit var user: User
 
-    private lateinit var tvNameUser: TextView
+    private lateinit var parentUniversitas: TextInputLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -130,10 +133,12 @@ class InputFragment : Fragment() {
         this.txtTanggalLahir = v.findViewById(R.id.txt_tanggal_lahir)
         this.txtTempatLahir = v.findViewById(R.id.txt_tempat_lahir)
         this.txtUmur = v.findViewById(R.id.txt_umur)
+        this.txtUniversitas = v.findViewById(R.id.txt_universitas)
         this.txtSubPekerjaan3 = v.findViewById(R.id.txt_subpekerjaan_3)
         this.formFamily = v.findViewById(R.id.sub_dynamic)
         this.formSub = v.findViewById(R.id.sub_form)
         this.tvNameUser = v.findViewById(R.id.tv_name_user)
+        this.parentUniversitas = v.findViewById(R.id.parent_universitas)
 
         return v
     }
@@ -224,6 +229,27 @@ class InputFragment : Fragment() {
                 }
             }
 
+
+        this.spinnerPendidikan.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    if (parent!!.getItemIdAtPosition(position) > 2)
+                        parentUniversitas.visibility = View.VISIBLE
+                    else
+                        parentUniversitas.visibility = View.GONE
+                }
+
+            }
+
         this.btnSubmit.setOnClickListener {
             onSubmit(ConnectionChecker.isNetworkAvailable(requireContext()))
         }
@@ -263,6 +289,7 @@ class InputFragment : Fragment() {
         data["rw"] = (spinnerRw.selectedItem as Rw).id_rw
         // init null-value - safety insert to local
         data["pendidikan"] = ""
+        data["ket_pendidikan"] = ""
         data["pekerjaan"] = ""
         data["sub_pekerjaan"] = ""
         data["sub_pekerjaan_2"] = ""
@@ -273,6 +300,7 @@ class InputFragment : Fragment() {
         if (!isOverThan59) {
             // some of rest code
             data["pendidikan"] = spinnerPendidikan.selectedItemPosition + 1
+            data["ket_pendidikan"] = txtUniversitas.text.toString()
             data["pekerjaan"] = (spinnerPekerjaan.selectedItem as Pekerjaan).id_pekerjaan
             data["sub_pekerjaan"] = (spinnerSubPekerjaan1.selectedItem as SubPekerjaan1).id_sub
             data["sub_pekerjaan_2"] = (spinnerSubPekerjaan2.selectedItem as SubPekerjaan2).id_sub2
@@ -328,7 +356,8 @@ class InputFragment : Fragment() {
                 data["nomor"].toString(), "BANYUWANGI",
                 data["kecamatan"].toString(), data["desa"].toString(),
                 data["dusun"].toString(), data["rt"].toString(), data["rw"].toString(),
-                data["pendidikan"].toString(), data["pekerjaan"].toString(),
+                data["pendidikan"].toString(), data["ket_pendidikan"].toString(),
+                data["pekerjaan"].toString(),
                 data["sub_pekerjaan"].toString(), data["sub_pekerjaan_2"].toString(),
                 data["sub_pekerjaan_3"].toString(), data["penghasilan"].toString(),
                 data["anggota"].toString(), idSession, arrFamily
@@ -376,6 +405,7 @@ class InputFragment : Fragment() {
                 data["rt"] = member.rt
                 data["rw"] = member.rw
                 data["pendidikan"] = member.pendidikan.toString()
+                data["ket_pendidikan"] = member.keterangan.toString()
                 data["pekerjaan"] = member.pekerjaan.toString()
                 data["sub_pekerjaan"] = member.subPekerjaan1.toString()
                 data["sub_pekerjaan_2"] = member.subPekerjaan2.toString()
@@ -409,7 +439,6 @@ class InputFragment : Fragment() {
     private fun onSubmitOverInternet(idSession: Int, data: HashMap<String, Any>) {
         this.service.inputData(idSession, data).enqueue(object : Callback<ResponseBody> {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                //Snackbar.make(btnSubmit, t.message.toString(), Snackbar.LENGTH_SHORT).show()
                 if(context != null) {
                     Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
                         .show()
@@ -432,12 +461,11 @@ class InputFragment : Fragment() {
                         )
                             .show()
                     } else {
-//                        Snackbar.make(btnSubmit, "Berhasil upload ke cloud!", Snackbar.LENGTH_SHORT)
-//                            .show()
-                        Toast.makeText(requireContext(), "Berhasil upload ke cloud!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Berhasil upload ke cloud!",
+                            Toast.LENGTH_SHORT).show()
                     }
                 } catch (e: JSONException) {
-                    Log.d("HAHAHA", e.message.toString())
+                    e.message.toString()
                 }
             }
 
@@ -487,7 +515,6 @@ class InputFragment : Fragment() {
         this.service.getKecamatan().enqueue(object : Callback<Kecamatan.Response> {
 
             override fun onFailure(call: Call<Kecamatan.Response>, t: Throwable) {
-                //Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
                 if(context != null) {
                     Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
                         .show()
@@ -499,7 +526,11 @@ class InputFragment : Fragment() {
                 response: Response<Kecamatan.Response>
             ) {
                 val data = response.body()?.data
-                val arrayAdapter = data?.let {
+                val filtered =
+                    if (user.tb_tugas_kecamatan.isEmpty()) data
+                    else data!!.filter { it.id_kecamatan.equals(user.tb_tugas_kecamatan) }
+
+                val arrayAdapter = filtered!!.let {
                     ArrayAdapter(
                         context!!,
                         android.R.layout.simple_spinner_item, it
@@ -516,7 +547,6 @@ class InputFragment : Fragment() {
     private fun loadDesa() {
         this.service.getDesa().enqueue(object : Callback<Desa.Response> {
             override fun onFailure(call: Call<Desa.Response>, t: Throwable) {
-                //Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
                 if(context != null) {
                     Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
                         .show()
@@ -525,7 +555,11 @@ class InputFragment : Fragment() {
 
             override fun onResponse(call: Call<Desa.Response>, response: Response<Desa.Response>) {
                 val data = response.body()?.data
-                val arrayAdapter = data?.let {
+                val filtered =
+                    if (user.tb_tugas_desa.isEmpty()) data
+                    else data!!.filter { it.id_desa.equals(user.tb_tugas_desa) }
+
+                val arrayAdapter = filtered!!.let {
                     ArrayAdapter(
                         context!!,
                         android.R.layout.simple_spinner_item, it
@@ -542,7 +576,6 @@ class InputFragment : Fragment() {
     private fun loadDusun() {
         this.service.getDusun().enqueue(object : Callback<Dusun.Response> {
             override fun onFailure(call: Call<Dusun.Response>, t: Throwable) {
-                //Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
                 if(context != null) {
                     Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
                         .show()
@@ -571,7 +604,6 @@ class InputFragment : Fragment() {
     private fun loadRt() {
         this.service.getRt().enqueue(object : Callback<Rt.Response> {
             override fun onFailure(call: Call<Rt.Response>, t: Throwable) {
-                //Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
                 if(context != null) {
                     Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
                         .show()
@@ -597,7 +629,6 @@ class InputFragment : Fragment() {
         this.service.getRw().enqueue(object : Callback<Rw.Response> {
 
             override fun onFailure(call: Call<Rw.Response>, t: Throwable) {
-                //Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
                 if(context != null) {
                     Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
                         .show()
@@ -623,7 +654,6 @@ class InputFragment : Fragment() {
     private fun loadPekerjaan() {
         this.service.getPekerjaan().enqueue(object : Callback<Pekerjaan.Response> {
             override fun onFailure(call: Call<Pekerjaan.Response>, t: Throwable) {
-                //Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
                 if(context != null) {
                     Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
                         .show()
@@ -690,7 +720,6 @@ class InputFragment : Fragment() {
     private fun loadSubPekerjaan1(id: Int) {
         this.service.getSubPekerjaan1(id).enqueue(object : Callback<SubPekerjaan1.Response> {
             override fun onFailure(call: Call<SubPekerjaan1.Response>, t: Throwable) {
-                //Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
                 if(context != null) {
                     Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
                         .show()
@@ -719,7 +748,6 @@ class InputFragment : Fragment() {
     private fun loadSubPekerjaan2(id: Int) {
         this.service.getSubPekerjaan2(id).enqueue(object : Callback<SubPekerjaan2.Response> {
             override fun onFailure(call: Call<SubPekerjaan2.Response>, t: Throwable) {
-                //Snackbar.make(btnAddDynamicForm, t.message.toString(), Snackbar.LENGTH_SHORT).show()
                 if(context != null) {
                     Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
                         .show()
@@ -786,8 +814,6 @@ class InputFragment : Fragment() {
         var age: Int = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR)
         if (today.get(Calendar.DAY_OF_MONTH) < dob.get(Calendar.DAY_OF_MONTH)) {
             age--
-        } else {
-            Toast.makeText(context, "Salah", Toast.LENGTH_LONG)
         }
         return age
     }

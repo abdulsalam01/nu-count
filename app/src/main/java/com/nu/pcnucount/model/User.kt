@@ -12,7 +12,13 @@ data class User(
     @SerializedName("level")
     val level: Int,
     @SerializedName("tb_tugas")
-    val tb_tugas: String
+    val tb_tugas: String,
+    @SerializedName("id_tugas")
+    val id_tugas: String,
+    @SerializedName("tb_tugas_kecamatan")
+    val tb_tugas_kecamatan: String,
+    @SerializedName("tb_tugas_desa")
+    val tb_tugas_desa: String
 ) {
     data class Response(@SerializedName("data")
                         val data: User,

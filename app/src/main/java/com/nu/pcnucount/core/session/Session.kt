@@ -16,6 +16,9 @@ object Session {
     const val USER_SURNAME = "user_surname"
     const val USER_LEVEL = "user_level"
     const val USER_TASK = "user_task"
+    const val TASK_ID = "task_id"
+    const val TASK_DISTRICT = "task_district"
+    const val TASK_VILLAGE = "task_village"
 
     fun getPreferences(context: Context): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(context);
@@ -30,6 +33,9 @@ object Session {
         editor.putString(USER_SURNAME, user.username)
         editor.putInt(USER_LEVEL, user.level)
         editor.putString(USER_TASK, user.tb_tugas)
+        editor.putString(TASK_ID, user.id_tugas)
+        editor.putString(TASK_DISTRICT, user.tb_tugas_kecamatan)
+        editor.putString(TASK_VILLAGE, user.tb_tugas_desa)
 
         editor.apply()
 
@@ -47,7 +53,11 @@ object Session {
             sharePreferenceManager.getString(USER_NAME, null)!!,
             sharePreferenceManager.getString(USER_SURNAME, null)!!,
             sharePreferenceManager.getInt(USER_LEVEL, -1),
-            sharePreferenceManager.getString(USER_TASK, null)!!)
+            sharePreferenceManager.getString(USER_TASK, null)!!,
+            sharePreferenceManager.getString(USER_TASK, null)!!,
+            sharePreferenceManager.getString(TASK_DISTRICT, "")!!,
+            sharePreferenceManager.getString(TASK_VILLAGE, "")!!
+        )
     }
 
     fun clearUser(context: Context) {

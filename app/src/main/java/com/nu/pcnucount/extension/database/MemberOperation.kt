@@ -33,6 +33,7 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
             contentValues.put(RT, data.rt)
             contentValues.put(RW, data.rw)
             contentValues.put(PENDIDIKAN, data.pendidikan)
+            contentValues.put(KETERANGAN, data.keterangan)
             contentValues.put(PEKERJAAN, data.pekerjaan)
             contentValues.put(SUB_PEKERJAAN_1, data.subPekerjaan1)
             contentValues.put(SUB_PEKERJAAN_2, data.subPekerjaan2)
@@ -127,6 +128,7 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
                     cursor.getString(cursor.getColumnIndex(RT)),
                     cursor.getString(cursor.getColumnIndex(RW)),
                     cursor.getString(cursor.getColumnIndex(PENDIDIKAN)),
+                    cursor.getString(cursor.getColumnIndex(KETERANGAN)),
                     cursor.getString(cursor.getColumnIndex(PEKERJAAN)),
                     cursor.getString(cursor.getColumnIndex(SUB_PEKERJAAN_1)),
                     cursor.getString(cursor.getColumnIndex(SUB_PEKERJAAN_2)),
@@ -186,6 +188,7 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
                     cursor.getString(cursor.getColumnIndex(RT)),
                     cursor.getString(cursor.getColumnIndex(RW)),
                     cursor.getString(cursor.getColumnIndex(PENDIDIKAN)),
+                    cursor.getString(cursor.getColumnIndex(KETERANGAN)),
                     cursor.getString(cursor.getColumnIndex(PEKERJAAN)),
                     cursor.getString(cursor.getColumnIndex(SUB_PEKERJAAN_1)),
                     cursor.getString(cursor.getColumnIndex(SUB_PEKERJAAN_2)),

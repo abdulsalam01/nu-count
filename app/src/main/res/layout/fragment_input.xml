@@ -269,6 +269,25 @@
                 android:background="@drawable/spinner_dropdown_state"
                 android:spinnerMode="dropdown" />
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/parent_universitas"
+                style="@style/TextInputLayoutStyle"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                app:errorEnabled="true"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txt_universitas"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/hint_universitas"
+                    android:textSize="14sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
             <Spinner
                 android:id="@+id/spinner_pekerjaan"
                 style="@style/Spinner"

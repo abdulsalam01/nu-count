@@ -32,6 +32,7 @@ abstract class DatabaseHandler(context: Context):
     protected val RT = "rt"
     protected val RW = "rw"
     protected val PENDIDIKAN = "pendidikan"
+    protected val KETERANGAN = "keterangan_pendidikan"
     protected val PEKERJAAN = "pekerjaan"
     protected val SUB_PEKERJAAN_1 = "sub_pekerjaan_1"
     protected val SUB_PEKERJAAN_2 = "sub_pekerjaan_2"
@@ -61,6 +62,7 @@ abstract class DatabaseHandler(context: Context):
                 "$RT TEXT," +
                 "$RW TEXT," +
                 "$PENDIDIKAN TEXT," +
+                "$KETERANGAN TEXT," +
                 "$PEKERJAAN TEXT," +
                 "$SUB_PEKERJAAN_1 TEXT," +
                 "$SUB_PEKERJAAN_2 TEXT," +
