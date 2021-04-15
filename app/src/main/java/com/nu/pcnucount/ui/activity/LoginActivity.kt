@@ -2,6 +2,9 @@ package com.nu.pcnucount.ui.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.TextUtils
+import android.view.View
+import android.widget.ProgressBar
 import com.nu.pcnucount.R
 import com.nu.pcnucount.core.constant.Service
 import com.nu.pcnucount.core.helper.GlobalHelper
@@ -20,6 +23,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var btnLogin: MaterialButton
     private lateinit var txtUsername: TextInputEditText
     private lateinit var txtPassword: TextInputEditText
+    private lateinit var progressBar: ProgressBar
 
     private lateinit var service: Service
 
@@ -31,6 +35,7 @@ class LoginActivity : AppCompatActivity() {
         this.btnLogin = this.findViewById(R.id.btn_login)
         this.txtUsername = this.findViewById(R.id.txt_username)
         this.txtPassword = this.findViewById(R.id.txt_password)
+        this.progressBar = this.findViewById(R.id.pDialog)
         this.service = ServiceManager.getInstance()
 
         this.btnLogin.setOnClickListener {
@@ -41,7 +46,19 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun login(username: String, password: String) : Unit {
+    private fun login(username: String, password: String): Unit {
+        if (TextUtils.isEmpty(username)) {
+            this.txtUsername.error = resources.getString(R.string.validation_username)
+            this.txtUsername.requestFocus()
+            return
+        }
+        if (TextUtils.isEmpty(password)) {
+            this.txtPassword.setError(resources.getString(R.string.validation_password), null)
+            this.txtPassword.requestFocus()
+            return
+        }
+
+        this.progressBar.visibility = View.VISIBLE
         this.service.login(username, password).enqueue(object : Callback<User.Response> {
 
             override fun onFailure(call: Call<User.Response>, t: Throwable) {
@@ -49,6 +66,8 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onResponse(call: Call<User.Response>, response: Response<User.Response>) {
+                progressBar.visibility = View.GONE
+
                 val success = response.body()!!.success
                 val user = response.body()?.data
 
@@ -65,7 +84,6 @@ class LoginActivity : AppCompatActivity() {
     private fun checkSession(): Unit {
         if (Session.isLoggedIn(this)) {
             GlobalHelper.changeActivity(this, MainActivity())
-            finish()
         }
     }
 }

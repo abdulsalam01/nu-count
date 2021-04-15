@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     private lateinit var bottomNav: BottomNavigationView
 
-    //private var exit: Boolean = false
+    private var exit: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,15 +85,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
     }
 
-//    override fun onBackPressed() {
-//        if (exit) {
-//            finish()
-//        } else {
-//            Toast.makeText(this, "Tekan sekali lagi untuk keluar", Toast.LENGTH_LONG).show()
-//            exit = true
-//            Handler().postDelayed({ exit = false }, 2000)
-//        }
-//        //super.onBackPressed()
-//    }
+    override fun onBackPressed() {
+        if (exit) {
+            super.onBackPressed()
+        } else {
+            Toast.makeText(this, "Tekan sekali lagi untuk keluar", Toast.LENGTH_LONG).show()
+            exit = true
+            Handler().postDelayed({ exit = false }, 2000)
+        }
+    }
 
 }

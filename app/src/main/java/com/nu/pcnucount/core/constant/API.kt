@@ -1,7 +1,7 @@
 package com.nu.pcnucount.core.constant
 
 object API {
-    const val isOffline = true
+    const val isOffline = false
 
     val BASE_URL = if (isOffline) "http://192.168.0.108:8800/lakpesdam/" else "http://lakpesdampcnubwi.com/"
     const val PREFIX = "api/"

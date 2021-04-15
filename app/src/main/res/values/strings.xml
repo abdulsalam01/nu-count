@@ -57,6 +57,8 @@
     <string name="heading_login">Login</string>
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
+    <string name="validation_username">Username tidak boleh kosong</string>
+    <string name="validation_password">Password tidak boleh kosong</string>
 
     <!-- Form Input -->
     <string name="hint_nama">Masukan Nama</string>
