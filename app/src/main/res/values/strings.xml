@@ -79,5 +79,6 @@
     <string name="ya">Ya</string>
     <string name="tidak">Tidak</string>
     <string name="hint_universitas">Universitas/Jurusan</string>
+    <string name="hint_dusun">Nama dusun</string>
 
 </resources>

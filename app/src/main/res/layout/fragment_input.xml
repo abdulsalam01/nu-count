@@ -203,14 +203,31 @@
             android:background="@drawable/spinner_dropdown_state"
             android:spinnerMode="dropdown" />
 
-        <Spinner
-            android:id="@+id/spinner_dusun"
-            style="@style/Spinner"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/TextInputLayoutStyle"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/spinner_dropdown_state"
-            android:spinnerMode="dropdown" />
+            android:layout_marginTop="25dp"
+            app:errorEnabled="true"
+            app:hintEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txt_dusun"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/hint_dusun"
+                android:textSize="14sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+<!--        <Spinner-->
+<!--            android:id="@+id/spinner_dusun"-->
+<!--            style="@style/Spinner"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_marginTop="15dp"-->
+<!--            android:background="@drawable/spinner_dropdown_state"-->
+<!--            android:spinnerMode="dropdown" />-->
 
         <Spinner
             android:id="@+id/spinner_rt"

@@ -65,7 +65,7 @@ class InputFragment : Fragment() {
     private lateinit var spinnerKabupaten: Spinner
     private lateinit var spinnerKecamatan: Spinner
     private lateinit var spinnerDesa: Spinner
-    private lateinit var spinnerDusun: Spinner
+//    private lateinit var spinnerDusun: Spinner
     private lateinit var spinnerRt: Spinner
     private lateinit var spinnerRw: Spinner
     private lateinit var spinnerPendidikan: Spinner
@@ -83,6 +83,7 @@ class InputFragment : Fragment() {
     private lateinit var txtUmur: TextInputEditText
     private lateinit var txtUniversitas: TextInputEditText
     private lateinit var txtSubPekerjaan3: TextInputEditText
+    private lateinit var txtDusun: TextInputEditText
     private lateinit var tvNameUser: TextView
 
     private lateinit var formFamily: LinearLayout
@@ -118,7 +119,7 @@ class InputFragment : Fragment() {
         this.spinnerKabupaten = v.findViewById(R.id.spinner_kabupaten)
         this.spinnerKecamatan = v.findViewById(R.id.spinner_kecamatan)
         this.spinnerDesa = v.findViewById(R.id.spinner_desa)
-        this.spinnerDusun = v.findViewById(R.id.spinner_dusun)
+//        this.spinnerDusun = v.findViewById(R.id.spinner_dusun)
         this.spinnerRt = v.findViewById(R.id.spinner_rt)
         this.spinnerRw = v.findViewById(R.id.spinner_rw)
         this.spinnerPendidikan = v.findViewById(R.id.spinner_pendidikan)
@@ -129,6 +130,7 @@ class InputFragment : Fragment() {
         this.spinnerAnggota = v.findViewById(R.id.spinner_anggota)
         this.txtNamaLengkap = v.findViewById(R.id.txt_nama_lengkap)
         this.txtNik = v.findViewById(R.id.txt_nik)
+        this.txtDusun = v.findViewById(R.id.txt_dusun)
         this.txtNomorHp = v.findViewById(R.id.txt_nomor_hp)
         this.txtTanggalLahir = v.findViewById(R.id.txt_tanggal_lahir)
         this.txtTempatLahir = v.findViewById(R.id.txt_tempat_lahir)
@@ -261,7 +263,7 @@ class InputFragment : Fragment() {
         loadKabupaten()
         loadKecamatan()
         loadDesa()
-        loadDusun()
+//        loadDusun()
         loadRt()
         loadRw()
         loadPendidikan()
@@ -284,7 +286,8 @@ class InputFragment : Fragment() {
         data["nomor"] = txtNomorHp.text.toString()
         data["kecamatan"] = (spinnerKecamatan.selectedItem as Kecamatan).id_kecamatan
         data["desa"] = (spinnerDesa.selectedItem as Desa).id_desa
-        data["dusun"] = (spinnerDusun.selectedItem as Dusun).id_dusun
+//        data["dusun"] = (spinnerDusun.selectedItem as Dusun).id_dusun
+        data["dusun"] = txtDusun.text.toString()
         data["rt"] = (spinnerRt.selectedItem as Rt).id_rt
         data["rw"] = (spinnerRw.selectedItem as Rw).id_rw
         // init null-value - safety insert to local
@@ -573,33 +576,33 @@ class InputFragment : Fragment() {
         })
     }
 
-    private fun loadDusun() {
-        this.service.getDusun().enqueue(object : Callback<Dusun.Response> {
-            override fun onFailure(call: Call<Dusun.Response>, t: Throwable) {
-                if(context != null) {
-                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
-
-            override fun onResponse(
-                call: Call<Dusun.Response>,
-                response: Response<Dusun.Response>
-            ) {
-                val data = response.body()?.data
-                val arrayAdapter = data?.let {
-                    ArrayAdapter(
-                        context!!,
-                        android.R.layout.simple_spinner_item, it
-                    )
-                }
-
-                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinnerDusun.adapter = arrayAdapter
-            }
-
-        })
-    }
+//    private fun loadDusun() {
+//        this.service.getDusun().enqueue(object : Callback<Dusun.Response> {
+//            override fun onFailure(call: Call<Dusun.Response>, t: Throwable) {
+//                if(context != null) {
+//                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+//                        .show()
+//                }
+//            }
+//
+//            override fun onResponse(
+//                call: Call<Dusun.Response>,
+//                response: Response<Dusun.Response>
+//            ) {
+//                val data = response.body()?.data
+//                val arrayAdapter = data?.let {
+//                    ArrayAdapter(
+//                        context!!,
+//                        android.R.layout.simple_spinner_item, it
+//                    )
+//                }
+//
+//                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//                spinnerDusun.adapter = arrayAdapter
+//            }
+//
+//        })
+//    }
 
     private fun loadRt() {
         this.service.getRt().enqueue(object : Callback<Rt.Response> {
