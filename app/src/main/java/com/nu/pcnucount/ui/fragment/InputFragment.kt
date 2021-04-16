@@ -92,6 +92,7 @@ class InputFragment : Fragment() {
     private var isOverThan59: Boolean = true
 
     private lateinit var user: User
+    private lateinit var subPekerjaan2: SubPekerjaan2
 
     private lateinit var parentUniversitas: TextInputLayout
 
@@ -110,6 +111,7 @@ class InputFragment : Fragment() {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_input, container, false)
 
+        this.subPekerjaan2 = SubPekerjaan2("", "", "")
         this.memberOperation = MemberOperation(requireContext())
         this.btnAddDynamicForm = v.findViewById(R.id.btn_add_dynamic_form)
         this.btnRemoveDynamicForm = v.findViewById(R.id.btn_remove_dynamic_form)
@@ -231,6 +233,21 @@ class InputFragment : Fragment() {
                 }
             }
 
+        this.spinnerSubPekerjaan2.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    subPekerjaan2 = parent!!.getItemAtPosition(position) as SubPekerjaan2
+                }
+            }
 
         this.spinnerPendidikan.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
@@ -306,7 +323,11 @@ class InputFragment : Fragment() {
             data["ket_pendidikan"] = txtUniversitas.text.toString()
             data["pekerjaan"] = (spinnerPekerjaan.selectedItem as Pekerjaan).id_pekerjaan
             data["sub_pekerjaan"] = (spinnerSubPekerjaan1.selectedItem as SubPekerjaan1).id_sub
-            data["sub_pekerjaan_2"] = (spinnerSubPekerjaan2.selectedItem as SubPekerjaan2).id_sub2
+            data["sub_pekerjaan_2"] =
+                if(!this.subPekerjaan2.id_sub2.toString().isEmpty())
+                    (spinnerSubPekerjaan2.selectedItem as SubPekerjaan2).id_sub2
+                else
+                    ""
             data["sub_pekerjaan_3"] = txtSubPekerjaan3.text.toString()
             data["penghasilan"] = spinnerPenghasilan.selectedItemPosition + 1
             data["anggota"] = spinnerAnggota.selectedItemPosition + 1
