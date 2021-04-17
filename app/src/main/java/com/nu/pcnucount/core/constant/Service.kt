@@ -38,6 +38,12 @@ interface Service {
     @GET(API.GET_SUB_2 + "{id}")
     fun getSubPekerjaan2(@Path("id") id: Int): Call<SubPekerjaan2.Response>
 
+    @GET(API.GET_JABATAN)
+    fun getJabatan(): Call<Jabatan.Response>
+
+    @GET(API.GET_STRUKTUR)
+    fun getStruktur(): Call<Struktur.Response>
+
     @JvmSuppressWildcards
     @FormUrlEncoded
     @POST(API.INPUT_DATA + "{id}")

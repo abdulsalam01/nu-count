@@ -1,7 +1,7 @@
 package com.nu.pcnucount.core.constant
 
 object API {
-    const val isOffline = false
+    const val isOffline = true
 
     val BASE_URL = if (isOffline) "http://192.168.0.108:8800/lakpesdam/" else "http://lakpesdampcnubwi.com/"
     const val PREFIX = "api/"
@@ -20,6 +20,8 @@ object API {
     const val GET_PEKERJAAN = _GET + "pekerjaan"
     const val GET_SUB_1 = _GET + "sub1/"
     const val GET_SUB_2 = _GET + "sub2/"
+    const val GET_JABATAN = _GET + "jabatan/"
+    const val GET_STRUKTUR = _GET + "struktur/"
 
     // one-signal-api
     const val appID = "822ed180-fd27-4806-b47d-d60e96ab9e0e"

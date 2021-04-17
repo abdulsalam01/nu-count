@@ -40,6 +40,11 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
             contentValues.put(SUB_PEKERJAAN_3, data.subPekerjaan3)
             contentValues.put(ANGGOTA, data.anggota)
             contentValues.put(PENGHASILAN, data.penghasilan)
+            contentValues.put(KATANU, data.katanu)
+            contentValues.put(STRUKTUR_KATANU, data.struktur)
+            contentValues.put(JENIS_STRUKTUR, data.jenisStruktur)
+            contentValues.put(JABATAN, data.jabatan)
+            contentValues.put(PERIODE, data.periode)
             contentValues.put(ID_PETUGAS, data.idPetugas)
 
             success = db.insert(TABLE_MEMBER, null, contentValues)
@@ -135,6 +140,11 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
                     cursor.getString(cursor.getColumnIndex(SUB_PEKERJAAN_3)),
                     cursor.getString(cursor.getColumnIndex(PENGHASILAN)),
                     cursor.getString(cursor.getColumnIndex(ANGGOTA)),
+                    cursor.getString(cursor.getColumnIndex(KATANU)),
+                    cursor.getString(cursor.getColumnIndex(STRUKTUR_KATANU)),
+                    cursor.getString(cursor.getColumnIndex(JENIS_STRUKTUR)),
+                    cursor.getString(cursor.getColumnIndex(JABATAN)),
+                    cursor.getString(cursor.getColumnIndex(PERIODE)),
                     cursor.getInt(cursor.getColumnIndex(ID_PETUGAS)),
                     family
                 )
@@ -195,6 +205,11 @@ class MemberOperation(val context: Context) : SqlOperation<Member>, DatabaseHand
                     cursor.getString(cursor.getColumnIndex(SUB_PEKERJAAN_3)),
                     cursor.getString(cursor.getColumnIndex(PENGHASILAN)),
                     cursor.getString(cursor.getColumnIndex(ANGGOTA)),
+                    cursor.getString(cursor.getColumnIndex(KATANU)),
+                    cursor.getString(cursor.getColumnIndex(STRUKTUR_KATANU)),
+                    cursor.getString(cursor.getColumnIndex(JENIS_STRUKTUR)),
+                    cursor.getString(cursor.getColumnIndex(JABATAN)),
+                    cursor.getString(cursor.getColumnIndex(PERIODE)),
                     cursor.getInt(cursor.getColumnIndex(ID_PETUGAS)),
                     family
                 )

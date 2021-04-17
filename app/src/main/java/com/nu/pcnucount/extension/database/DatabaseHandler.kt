@@ -40,6 +40,11 @@ abstract class DatabaseHandler(context: Context):
     protected val PENGHASILAN = "penghasilan"
     protected val ANGGOTA = "anggota"
     protected val ID_PETUGAS = "id_petugas"
+    protected val KATANU = "katanu"
+    protected val STRUKTUR_KATANU = "struktur_katanu"
+    protected val JENIS_STRUKTUR = "jenis_struktur_katanu"
+    protected val PERIODE = "periode"
+    protected val JABATAN = "jabatan"
 
     protected val NAMA = "nama"
     protected val USIA = "usia"
@@ -69,6 +74,11 @@ abstract class DatabaseHandler(context: Context):
                 "$SUB_PEKERJAAN_3 TEXT," +
                 "$PENGHASILAN TEXT," +
                 "$ANGGOTA TEXT," +
+                "$KATANU TEXT," +
+                "$STRUKTUR_KATANU TEXT," +
+                "$JENIS_STRUKTUR TEXT," +
+                "$JABATAN TEXT," +
+                "$PERIODE TEXT," +
                 "$ID_PETUGAS INTEGER)")
 
         val CREATE_FAMILY_TABLE = ("CREATE TABLE $TABLE_FAMILY (" +

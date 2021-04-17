@@ -74,6 +74,8 @@ class InputFragment : Fragment() {
     private lateinit var spinnerSubPekerjaan2: Spinner
     private lateinit var spinnerPenghasilan: Spinner
     private lateinit var spinnerAnggota: Spinner
+    private lateinit var spinnerStruktur: Spinner
+    private lateinit var spinnerJabatan: Spinner
 
     private lateinit var txtNamaLengkap: TextInputEditText
     private lateinit var txtNik: TextInputEditText
@@ -84,15 +86,22 @@ class InputFragment : Fragment() {
     private lateinit var txtUniversitas: TextInputEditText
     private lateinit var txtSubPekerjaan3: TextInputEditText
     private lateinit var txtDusun: TextInputEditText
+    private lateinit var txtKatanu: TextInputEditText
+    private lateinit var txtNamaStruktur: TextInputEditText
+    private lateinit var txtKepengurusan: TextInputEditText
     private lateinit var tvNameUser: TextView
 
     private lateinit var formFamily: LinearLayout
     private lateinit var formSub: LinearLayout
+    private lateinit var formMember: LinearLayout
 
     private var isOverThan59: Boolean = true
+    private var isMember: Boolean = false
 
     private lateinit var user: User
     private lateinit var subPekerjaan2: SubPekerjaan2
+    private lateinit var struktur: Struktur
+    private lateinit var jabatan: Jabatan
 
     private lateinit var parentUniversitas: TextInputLayout
 
@@ -111,6 +120,8 @@ class InputFragment : Fragment() {
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_input, container, false)
 
+        this.struktur = Struktur("", "")
+        this.jabatan = Jabatan("", "")
         this.subPekerjaan2 = SubPekerjaan2("", "", "")
         this.memberOperation = MemberOperation(requireContext())
         this.btnAddDynamicForm = v.findViewById(R.id.btn_add_dynamic_form)
@@ -130,6 +141,8 @@ class InputFragment : Fragment() {
         this.spinnerSubPekerjaan2 = v.findViewById(R.id.spinner_subpekerjaan2)
         this.spinnerPenghasilan = v.findViewById(R.id.spinner_penghasilan)
         this.spinnerAnggota = v.findViewById(R.id.spinner_anggota)
+        this.spinnerJabatan = v.findViewById(R.id.spinner_jabatan)
+        this.spinnerStruktur = v.findViewById(R.id.spinner_struktur)
         this.txtNamaLengkap = v.findViewById(R.id.txt_nama_lengkap)
         this.txtNik = v.findViewById(R.id.txt_nik)
         this.txtDusun = v.findViewById(R.id.txt_dusun)
@@ -139,8 +152,12 @@ class InputFragment : Fragment() {
         this.txtUmur = v.findViewById(R.id.txt_umur)
         this.txtUniversitas = v.findViewById(R.id.txt_universitas)
         this.txtSubPekerjaan3 = v.findViewById(R.id.txt_subpekerjaan_3)
+        this.txtKatanu = v.findViewById(R.id.txt_katanu)
+        this.txtNamaStruktur = v.findViewById(R.id.txt_nama_struktur)
+        this.txtKepengurusan = v.findViewById(R.id.txt_kepengurusan)
         this.formFamily = v.findViewById(R.id.sub_dynamic)
         this.formSub = v.findViewById(R.id.sub_form)
+        this.formMember = v.findViewById(R.id.sub_anggota)
         this.tvNameUser = v.findViewById(R.id.tv_name_user)
         this.parentUniversitas = v.findViewById(R.id.parent_universitas)
 
@@ -249,6 +266,38 @@ class InputFragment : Fragment() {
                 }
             }
 
+        this.spinnerJabatan.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    jabatan = parent!!.getItemAtPosition(position) as Jabatan
+                }
+            }
+
+        this.spinnerStruktur.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    struktur = parent!!.getItemAtPosition(position) as Struktur
+                }
+            }
+
         this.spinnerPendidikan.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
 
@@ -269,6 +318,28 @@ class InputFragment : Fragment() {
 
             }
 
+        this.spinnerAnggota.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    if (parent!!.getItemIdAtPosition(position) < 1) {
+                        isMember = true
+                        formMember.visibility = View.VISIBLE
+                    } else {
+                        isMember = false
+                        formMember.visibility = View.GONE
+                    }
+                }
+
+            }
+
         this.btnSubmit.setOnClickListener {
             onSubmit(ConnectionChecker.isNetworkAvailable(requireContext()))
         }
@@ -285,6 +356,8 @@ class InputFragment : Fragment() {
         loadRw()
         loadPendidikan()
         loadPekerjaan()
+        loadJabatan()
+        loadStruktur()
         loadPenghasilan()
         loadAnggota()
     }
@@ -316,6 +389,11 @@ class InputFragment : Fragment() {
         data["sub_pekerjaan_3"] = ""
         data["penghasilan"] = ""
         data["anggota"] = ""
+        data["katanu"] = ""
+        data["struktur_katanu"] = ""
+        data["jenis_stuktur_katanu"] = ""
+        data["periode"] = ""
+        data["jabatan"] = ""
 
         if (!isOverThan59) {
             // some of rest code
@@ -360,6 +438,21 @@ class InputFragment : Fragment() {
             data["keluarga"] = jsonArrFamily.toString()
         }
 
+        if (isMember) {
+            data["katanu"] = txtKatanu.text.toString()
+            data["struktur_katanu"] = if(!struktur.id_struktur.isEmpty())
+                (spinnerStruktur.selectedItem as Struktur).id_struktur
+            else
+                ""
+            data["jenis_stuktur_katanu"] = txtNamaStruktur.text.toString()
+            data["periode"] = txtKepengurusan.text.toString()
+            data["jabatan"] =
+                if(!this.jabatan.id_jabatan.isEmpty())
+                    (spinnerJabatan.selectedItem as Jabatan).id_jabatan
+                else
+                    ""
+        }
+
         // over internet
         if (connection) {
             Toast.makeText(
@@ -384,7 +477,10 @@ class InputFragment : Fragment() {
                 data["pekerjaan"].toString(),
                 data["sub_pekerjaan"].toString(), data["sub_pekerjaan_2"].toString(),
                 data["sub_pekerjaan_3"].toString(), data["penghasilan"].toString(),
-                data["anggota"].toString(), idSession, arrFamily
+                data["anggota"].toString(), data["katanu"].toString(),
+                data["struktur_katanu"].toString(), data["jenis_stuktur_katanu"].toString(),
+                data["periode"].toString(), data["jabatan"].toString(),
+                idSession, arrFamily
             )
 
             this.onSubmitOverLocalRoom(member)
@@ -436,6 +532,11 @@ class InputFragment : Fragment() {
                 data["sub_pekerjaan_3"] = member.subPekerjaan3.toString()
                 data["penghasilan"] = member.penghasilan.toString()
                 data["anggota"] = member.anggota
+                data["katanu"] = member.katanu
+                data["struktur_katanu"] = member.struktur
+                data["jenis_stuktur_katanu"] = member.jenisStruktur
+                data["periode"] = member.periode
+                data["jabatan"] = member.jabatan
 
                 val jsonArrFamily = JSONArray()
                 if (member.family!!.size > 0) {
@@ -698,6 +799,60 @@ class InputFragment : Fragment() {
 
                 arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 spinnerPekerjaan.adapter = arrayAdapter
+            }
+        })
+    }
+
+    private fun loadJabatan() {
+        this.service.getJabatan().enqueue(object : Callback<Jabatan.Response> {
+            override fun onFailure(call: Call<Jabatan.Response>, t: Throwable) {
+                if(context != null) {
+                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+
+            override fun onResponse(
+                call: Call<Jabatan.Response>,
+                response: Response<Jabatan.Response>
+            ) {
+                val data = response.body()?.data
+                val arrayAdapter = data?.let {
+                    ArrayAdapter(
+                        context!!,
+                        android.R.layout.simple_spinner_item, it
+                    )
+                }
+
+                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinnerJabatan.adapter = arrayAdapter
+            }
+        })
+    }
+
+    private fun loadStruktur() {
+        this.service.getStruktur().enqueue(object : Callback<Struktur.Response> {
+            override fun onFailure(call: Call<Struktur.Response>, t: Throwable) {
+                if(context != null) {
+                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+
+            override fun onResponse(
+                call: Call<Struktur.Response>,
+                response: Response<Struktur.Response>
+            ) {
+                val data = response.body()?.data
+                val arrayAdapter = data?.let {
+                    ArrayAdapter(
+                        context!!,
+                        android.R.layout.simple_spinner_item, it
+                    )
+                }
+
+                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinnerStruktur.adapter = arrayAdapter
             }
         })
     }
