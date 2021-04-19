@@ -18,12 +18,12 @@ import com.nu.pcnucount.R
 import com.nu.pcnucount.core.constant.Service
 import com.nu.pcnucount.core.helper.ConnectionChecker
 import com.nu.pcnucount.core.session.Session
-import com.nu.pcnucount.extension.database.MemberOperation
 import com.nu.pcnucount.extension.singleton.ServiceManager
 import com.nu.pcnucount.model.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.nu.pcnucount.extension.database.*
 import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONException
@@ -132,7 +132,6 @@ class InputFragment : Fragment() {
         this.spinnerKabupaten = v.findViewById(R.id.spinner_kabupaten)
         this.spinnerKecamatan = v.findViewById(R.id.spinner_kecamatan)
         this.spinnerDesa = v.findViewById(R.id.spinner_desa)
-//        this.spinnerDusun = v.findViewById(R.id.spinner_dusun)
         this.spinnerRt = v.findViewById(R.id.spinner_rt)
         this.spinnerRw = v.findViewById(R.id.spinner_rw)
         this.spinnerPendidikan = v.findViewById(R.id.spinner_pendidikan)
@@ -351,7 +350,6 @@ class InputFragment : Fragment() {
         loadKabupaten()
         loadKecamatan()
         loadDesa()
-//        loadDusun()
         loadRt()
         loadRw()
         loadPendidikan()
@@ -376,7 +374,6 @@ class InputFragment : Fragment() {
         data["nomor"] = txtNomorHp.text.toString()
         data["kecamatan"] = (spinnerKecamatan.selectedItem as Kecamatan).id_kecamatan
         data["desa"] = (spinnerDesa.selectedItem as Desa).id_desa
-//        data["dusun"] = (spinnerDusun.selectedItem as Dusun).id_dusun
         data["dusun"] = txtDusun.text.toString()
         data["rt"] = (spinnerRt.selectedItem as Rt).id_rt
         data["rw"] = (spinnerRw.selectedItem as Rw).id_rw
@@ -637,224 +634,309 @@ class InputFragment : Fragment() {
     }
 
     private fun loadKecamatan() {
-        this.service.getKecamatan().enqueue(object : Callback<Kecamatan.Response> {
+        if (!ConnectionChecker.isNetworkAvailable(requireContext())) {
 
-            override fun onFailure(call: Call<Kecamatan.Response>, t: Throwable) {
-                if(context != null) {
-                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                }
+            val kecamatanOperation = KecamatanOperation(requireContext())
+            val data = kecamatanOperation.getAll()
+            val filtered =
+                if (user.tb_tugas_kecamatan.isEmpty()) data
+                else data.filter { it.id_kecamatan.equals(user.tb_tugas_kecamatan) }
+
+            val arrayAdapter = filtered.let {
+                ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_spinner_item, it
+                )
             }
 
-            override fun onResponse(
-                call: Call<Kecamatan.Response>,
-                response: Response<Kecamatan.Response>
-            ) {
-                val data = response.body()?.data
-                val filtered =
-                    if (user.tb_tugas_kecamatan.isEmpty()) data
-                    else data!!.filter { it.id_kecamatan.equals(user.tb_tugas_kecamatan) }
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerKecamatan.adapter = arrayAdapter
 
-                val arrayAdapter = filtered!!.let {
-                    ArrayAdapter(
-                        context!!,
-                        android.R.layout.simple_spinner_item, it
-                    )
+        } else {
+            this.service.getKecamatan().enqueue(object : Callback<Kecamatan.Response> {
+
+                override fun onFailure(call: Call<Kecamatan.Response>, t: Throwable) {
+                    if (context != null) {
+                        Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
 
-                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinnerKecamatan.adapter = arrayAdapter
-            }
+                override fun onResponse(
+                    call: Call<Kecamatan.Response>,
+                    response: Response<Kecamatan.Response>
+                ) {
+                    val data = response.body()?.data
+                    val filtered =
+                        if (user.tb_tugas_kecamatan.isEmpty()) data
+                        else data!!.filter { it.id_kecamatan.equals(user.tb_tugas_kecamatan) }
 
-        })
+                    val arrayAdapter = filtered!!.let {
+                        ArrayAdapter(
+                            context!!,
+                            android.R.layout.simple_spinner_item, it
+                        )
+                    }
+
+                    arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinnerKecamatan.adapter = arrayAdapter
+                }
+
+            })
+        }
     }
 
     private fun loadDesa() {
-        this.service.getDesa().enqueue(object : Callback<Desa.Response> {
-            override fun onFailure(call: Call<Desa.Response>, t: Throwable) {
-                if(context != null) {
-                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                }
+        if (!ConnectionChecker.isNetworkAvailable(requireContext())) {
+
+            val desaOperation = DesaOperation(requireContext())
+            val data = desaOperation.getAll()
+            val filtered =
+                if (user.tb_tugas_desa.isEmpty())
+                    data
+                else
+                    data.filter { it.id_desa.equals(user.tb_tugas_desa) }
+
+            val arrayAdapter = filtered.let {
+                ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, it)
             }
 
-            override fun onResponse(call: Call<Desa.Response>, response: Response<Desa.Response>) {
-                val data = response.body()?.data
-                val filtered =
-                    if (user.tb_tugas_desa.isEmpty()) data
-                    else data!!.filter { it.id_desa.equals(user.tb_tugas_desa) }
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            arrayAdapter.notifyDataSetChanged()
+            spinnerDesa.adapter = arrayAdapter
 
-                val arrayAdapter = filtered!!.let {
-                    ArrayAdapter(
-                        context!!,
-                        android.R.layout.simple_spinner_item, it
-                    )
+        } else {
+            this.service.getDesa().enqueue(object : Callback<Desa.Response> {
+                override fun onFailure(call: Call<Desa.Response>, t: Throwable) {
+                    if (context != null) {
+                        Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
 
-                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinnerDesa.adapter = arrayAdapter
-            }
+                override fun onResponse(
+                    call: Call<Desa.Response>,
+                    response: Response<Desa.Response>
+                ) {
+                    val data = response.body()?.data
+                    val filtered =
+                        if (user.tb_tugas_desa.isEmpty()) data
+                        else data!!.filter { it.id_desa.equals(user.tb_tugas_desa) }
 
-        })
+                    val arrayAdapter = filtered!!.let {
+                        ArrayAdapter(
+                            context!!,
+                            android.R.layout.simple_spinner_item, it
+                        )
+                    }
+
+                    arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinnerDesa.adapter = arrayAdapter
+                }
+
+            })
+        }
     }
 
-//    private fun loadDusun() {
-//        this.service.getDusun().enqueue(object : Callback<Dusun.Response> {
-//            override fun onFailure(call: Call<Dusun.Response>, t: Throwable) {
-//                if(context != null) {
-//                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//            }
-//
-//            override fun onResponse(
-//                call: Call<Dusun.Response>,
-//                response: Response<Dusun.Response>
-//            ) {
-//                val data = response.body()?.data
-//                val arrayAdapter = data?.let {
-//                    ArrayAdapter(
-//                        context!!,
-//                        android.R.layout.simple_spinner_item, it
-//                    )
-//                }
-//
-//                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-//                spinnerDusun.adapter = arrayAdapter
-//            }
-//
-//        })
-//    }
-
     private fun loadRt() {
-        this.service.getRt().enqueue(object : Callback<Rt.Response> {
-            override fun onFailure(call: Call<Rt.Response>, t: Throwable) {
-                if(context != null) {
-                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                }
+        if (!ConnectionChecker.isNetworkAvailable(requireContext())) {
+
+            val rtOperation = RtOperation(requireContext())
+            val data = rtOperation.getAll()
+            val arrayAdapter = data.let {
+                ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, it)
             }
 
-            override fun onResponse(call: Call<Rt.Response>, response: Response<Rt.Response>) {
-                val data = response.body()?.data
-                val arrayAdapter = data?.let {
-                    ArrayAdapter(
-                        context!!,
-                        android.R.layout.simple_spinner_item, it
-                    )
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerRt.adapter = arrayAdapter
+
+        } else {
+            this.service.getRt().enqueue(object : Callback<Rt.Response> {
+                override fun onFailure(call: Call<Rt.Response>, t: Throwable) {
+                    if(context != null) {
+                        Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
 
-                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinnerRt.adapter = arrayAdapter
-            }
-        })
+                override fun onResponse(call: Call<Rt.Response>, response: Response<Rt.Response>) {
+                    val data = response.body()?.data
+                    val arrayAdapter = data?.let {
+                        ArrayAdapter(
+                            context!!,
+                            android.R.layout.simple_spinner_item, it
+                        )
+                    }
+
+                    arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinnerRt.adapter = arrayAdapter
+                }
+            })
+        }
     }
 
     private fun loadRw() {
-        this.service.getRw().enqueue(object : Callback<Rw.Response> {
-
-            override fun onFailure(call: Call<Rw.Response>, t: Throwable) {
-                if(context != null) {
-                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                }
+        if (!ConnectionChecker.isNetworkAvailable(requireContext())) {
+            val rwOperation = RwOperation(requireContext())
+            val data = rwOperation.getAll()
+            val arrayAdapter = data.let {
+                ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, it)
             }
 
-            override fun onResponse(call: Call<Rw.Response>, response: Response<Rw.Response>) {
-                val data = response.body()?.data
-                val arrayAdapter = data?.let {
-                    ArrayAdapter(
-                        context!!,
-                        android.R.layout.simple_spinner_item, it
-                    )
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerRw.adapter = arrayAdapter
+
+        } else {
+            this.service.getRw().enqueue(object : Callback<Rw.Response> {
+
+                override fun onFailure(call: Call<Rw.Response>, t: Throwable) {
+                    if(context != null) {
+                        Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
 
-                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinnerRw.adapter = arrayAdapter
-            }
+                override fun onResponse(call: Call<Rw.Response>, response: Response<Rw.Response>) {
+                    val data = response.body()?.data
+                    val arrayAdapter = data?.let {
+                        ArrayAdapter(
+                            context!!,
+                            android.R.layout.simple_spinner_item, it
+                        )
+                    }
 
-        })
+                    arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinnerRw.adapter = arrayAdapter
+                }
+
+            })
+        }
     }
 
     private fun loadPekerjaan() {
-        this.service.getPekerjaan().enqueue(object : Callback<Pekerjaan.Response> {
-            override fun onFailure(call: Call<Pekerjaan.Response>, t: Throwable) {
-                if(context != null) {
-                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                }
+        if (!ConnectionChecker.isNetworkAvailable(requireContext())) {
+
+            val pekerjaanOperation = PekerjaanOperation(requireContext())
+            val data = pekerjaanOperation.getAll()
+            val arrayAdapter = data.let {
+                ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, it)
             }
 
-            override fun onResponse(
-                call: Call<Pekerjaan.Response>,
-                response: Response<Pekerjaan.Response>
-            ) {
-                val data = response.body()?.data
-                val arrayAdapter = data?.let {
-                    ArrayAdapter(
-                        context!!,
-                        android.R.layout.simple_spinner_item, it
-                    )
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerPekerjaan.adapter = arrayAdapter
+
+        } else {
+            this.service.getPekerjaan().enqueue(object : Callback<Pekerjaan.Response> {
+                override fun onFailure(call: Call<Pekerjaan.Response>, t: Throwable) {
+                    if(context != null) {
+                        Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
 
-                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinnerPekerjaan.adapter = arrayAdapter
-            }
-        })
+                override fun onResponse(
+                    call: Call<Pekerjaan.Response>,
+                    response: Response<Pekerjaan.Response>
+                ) {
+                    val data = response.body()?.data
+                    val arrayAdapter = data?.let {
+                        ArrayAdapter(
+                            context!!,
+                            android.R.layout.simple_spinner_item, it
+                        )
+                    }
+
+                    arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinnerPekerjaan.adapter = arrayAdapter
+                }
+            })
+        }
     }
 
     private fun loadJabatan() {
-        this.service.getJabatan().enqueue(object : Callback<Jabatan.Response> {
-            override fun onFailure(call: Call<Jabatan.Response>, t: Throwable) {
-                if(context != null) {
-                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                }
+        if (!ConnectionChecker.isNetworkAvailable(requireContext())) {
+
+            val jabatanOperation = JabatanOperation(requireContext())
+            val data = jabatanOperation.getAll()
+            val arrayAdapter = data.let {
+                ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_spinner_item, it
+                )
             }
 
-            override fun onResponse(
-                call: Call<Jabatan.Response>,
-                response: Response<Jabatan.Response>
-            ) {
-                val data = response.body()?.data
-                val arrayAdapter = data?.let {
-                    ArrayAdapter(
-                        context!!,
-                        android.R.layout.simple_spinner_item, it
-                    )
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerJabatan.adapter = arrayAdapter
+        } else {
+
+            this.service.getJabatan().enqueue(object : Callback<Jabatan.Response> {
+                override fun onFailure(call: Call<Jabatan.Response>, t: Throwable) {
+                    if(context != null) {
+                        Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
 
-                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinnerJabatan.adapter = arrayAdapter
-            }
-        })
+                override fun onResponse(
+                    call: Call<Jabatan.Response>,
+                    response: Response<Jabatan.Response>
+                ) {
+                    val data = response.body()?.data
+                    val arrayAdapter = data?.let {
+                        ArrayAdapter(
+                            context!!,
+                            android.R.layout.simple_spinner_item, it
+                        )
+                    }
+
+                    arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinnerJabatan.adapter = arrayAdapter
+                }
+            })
+        }
     }
 
     private fun loadStruktur() {
-        this.service.getStruktur().enqueue(object : Callback<Struktur.Response> {
-            override fun onFailure(call: Call<Struktur.Response>, t: Throwable) {
-                if(context != null) {
-                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                }
+        if (!ConnectionChecker.isNetworkAvailable(requireContext())) {
+
+            val strukturOperation = StrukturOperation(requireContext())
+            val data = strukturOperation.getAll()
+            val arrayAdapter = data.let {
+                ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_spinner_item, it
+                )
             }
 
-            override fun onResponse(
-                call: Call<Struktur.Response>,
-                response: Response<Struktur.Response>
-            ) {
-                val data = response.body()?.data
-                val arrayAdapter = data?.let {
-                    ArrayAdapter(
-                        context!!,
-                        android.R.layout.simple_spinner_item, it
-                    )
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerStruktur.adapter = arrayAdapter
+        } else {
+
+            this.service.getStruktur().enqueue(object : Callback<Struktur.Response> {
+                override fun onFailure(call: Call<Struktur.Response>, t: Throwable) {
+                    if(context != null) {
+                        Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
 
-                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinnerStruktur.adapter = arrayAdapter
-            }
-        })
+                override fun onResponse(
+                    call: Call<Struktur.Response>,
+                    response: Response<Struktur.Response>
+                ) {
+                    val data = response.body()?.data
+                    val arrayAdapter = data?.let {
+                        ArrayAdapter(
+                            context!!,
+                            android.R.layout.simple_spinner_item, it
+                        )
+                    }
+
+                    arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinnerStruktur.adapter = arrayAdapter
+                }
+            })
+        }
     }
 
     private fun loadPendidikan() {
@@ -897,58 +979,90 @@ class InputFragment : Fragment() {
     }
 
     private fun loadSubPekerjaan1(id: Int) {
-        this.service.getSubPekerjaan1(id).enqueue(object : Callback<SubPekerjaan1.Response> {
-            override fun onFailure(call: Call<SubPekerjaan1.Response>, t: Throwable) {
-                if(context != null) {
-                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                }
+        if (!ConnectionChecker.isNetworkAvailable(requireContext())) {
+
+            val subPekerjaan1Operation = SubPekerjaan1Operation(requireContext())
+            val data = subPekerjaan1Operation.getByIds(id)
+            val arrayAdapter = data.let {
+                ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_spinner_item, it
+                )
             }
 
-            override fun onResponse(
-                call: Call<SubPekerjaan1.Response>,
-                response: Response<SubPekerjaan1.Response>
-            ) {
-                val data = response.body()?.data
-                val arrayAdapter = data?.let {
-                    ArrayAdapter(
-                        context!!,
-                        android.R.layout.simple_spinner_item, it
-                    )
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerSubPekerjaan1.adapter = arrayAdapter
+
+        } else {
+            this.service.getSubPekerjaan1(id).enqueue(object : Callback<SubPekerjaan1.Response> {
+                override fun onFailure(call: Call<SubPekerjaan1.Response>, t: Throwable) {
+                    if (context != null) {
+                        Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
 
-                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinnerSubPekerjaan1.adapter = arrayAdapter
-            }
+                override fun onResponse(
+                    call: Call<SubPekerjaan1.Response>,
+                    response: Response<SubPekerjaan1.Response>
+                ) {
+                    val data = response.body()?.data
+                    val arrayAdapter = data?.let {
+                        ArrayAdapter(
+                            context!!,
+                            android.R.layout.simple_spinner_item, it
+                        )
+                    }
 
-        })
+                    arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinnerSubPekerjaan1.adapter = arrayAdapter
+                }
+
+            })
+        }
     }
 
     private fun loadSubPekerjaan2(id: Int) {
-        this.service.getSubPekerjaan2(id).enqueue(object : Callback<SubPekerjaan2.Response> {
-            override fun onFailure(call: Call<SubPekerjaan2.Response>, t: Throwable) {
-                if(context != null) {
-                    Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
-                        .show()
-                }
+        if (!ConnectionChecker.isNetworkAvailable(requireContext())) {
+
+            val subPekerjaan2Operation = SubPekerjaan2Operation(requireContext())
+            val data = subPekerjaan2Operation.getByIds(id)
+            val arrayAdapter = data.let {
+                ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_spinner_item, it
+                )
             }
 
-            override fun onResponse(
-                call: Call<SubPekerjaan2.Response>,
-                response: Response<SubPekerjaan2.Response>
-            ) {
-                val data = response.body()?.data
-                val arrayAdapter = data?.let {
-                    ArrayAdapter(
-                        context!!,
-                        android.R.layout.simple_spinner_item, it
-                    )
+            arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerSubPekerjaan2.adapter = arrayAdapter
+
+        } else {
+            this.service.getSubPekerjaan2(id).enqueue(object : Callback<SubPekerjaan2.Response> {
+                override fun onFailure(call: Call<SubPekerjaan2.Response>, t: Throwable) {
+                    if(context != null) {
+                        Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
 
-                arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinnerSubPekerjaan2.adapter = arrayAdapter
-            }
-        })
+                override fun onResponse(
+                    call: Call<SubPekerjaan2.Response>,
+                    response: Response<SubPekerjaan2.Response>
+                ) {
+                    val data = response.body()?.data
+                    val arrayAdapter = data?.let {
+                        ArrayAdapter(
+                            context!!,
+                            android.R.layout.simple_spinner_item, it
+                        )
+                    }
+
+                    arrayAdapter!!.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinnerSubPekerjaan2.adapter = arrayAdapter
+                }
+            })
+        }
     }
 
     private fun showDatePicker() {

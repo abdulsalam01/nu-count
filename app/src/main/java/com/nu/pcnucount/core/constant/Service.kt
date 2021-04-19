@@ -35,8 +35,14 @@ interface Service {
     @GET(API.GET_SUB_1 + "{id}")
     fun getSubPekerjaan1(@Path("id") id: Int): Call<SubPekerjaan1.Response>
 
+    @GET(API.GET_SUB_1)
+    fun getSubAllPekerjaan1(): Call<SubPekerjaan1.Response>
+
     @GET(API.GET_SUB_2 + "{id}")
     fun getSubPekerjaan2(@Path("id") id: Int): Call<SubPekerjaan2.Response>
+
+    @GET(API.GET_SUB_2)
+    fun getSubAllPekerjaan2(): Call<SubPekerjaan2.Response>
 
     @GET(API.GET_JABATAN)
     fun getJabatan(): Call<Jabatan.Response>

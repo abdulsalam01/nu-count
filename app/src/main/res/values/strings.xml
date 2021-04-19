@@ -86,5 +86,6 @@
     <string name="hint_katanu">Katanu</string>
     <string name="hint_nama_struktur">Nama Struktur</string>
     <string name="hint_kepengurusan">Kepengurusan (Periode)</string>
+    <string name="sync">Sinkronisasi</string>
 
 </resources>
