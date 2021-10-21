@@ -81,6 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/hint_nik"
+                android:inputType="number"
                 android:textSize="14sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -172,6 +173,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/hint_no_hp"
+                android:inputType="number|phone"
                 android:textSize="14sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -420,6 +422,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:hint="@string/hint_katanu"
+                        android:inputType="number"
                         android:textSize="14sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -490,6 +493,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
                 android:layout_weight="0.5"
                 android:text="@string/add"
                 android:textSize="15sp"

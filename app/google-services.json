@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:972846711345:android:1cf2f3c0e9c1c0f6dbcb10",
         "android_client_info": {
-          "package_name": "com.example.nucount"
+          "package_name": "com.nu.nucount"
         }
       },
       "oauth_client": [
@@ -38,7 +38,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:972846711345:android:fe52e162183ecd0edbcb10",
         "android_client_info": {
-          "package_name": "com.nu.pcnucount"
+          "package_name": "com.nu.nucount"
         }
       },
       "oauth_client": [
@@ -46,7 +46,7 @@
           "client_id": "972846711345-ibn5j819tekm8btv9meg2b5pvlum23ce.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.nu.pcnucount",
+            "package_name": "com.nu.nucount",
             "certificate_hash": "9894a329b718c1e458a1427e81421854c988a6f7"
           }
         },

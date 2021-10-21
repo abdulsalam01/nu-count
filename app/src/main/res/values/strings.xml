@@ -83,9 +83,9 @@
     <string name="hint_universitas">Universitas/Jurusan</string>
     <string name="hint_dusun">Nama dusun</string>
     <string name="data_anggota">Data Anggota</string>
-    <string name="hint_katanu">Katanu</string>
-    <string name="hint_nama_struktur">Nama Struktur</string>
-    <string name="hint_kepengurusan">Kepengurusan (Periode)</string>
+    <string name="hint_katanu">Katanu (Opsional)</string>
+    <string name="hint_nama_struktur">Nama Struktur (Opsional)</string>
+    <string name="hint_kepengurusan">Kepengurusan (Periode) / Opsional</string>
     <string name="sync">Sinkronisasi</string>
 
 </resources>
